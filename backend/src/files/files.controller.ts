@@ -1,0 +1,77 @@
+import {
+  Controller, Post, Get, Delete, Param, Query,
+  UseInterceptors, UploadedFile, Body, Req,
+  UseGuards, ForbiddenException
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesService } from './files.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import type { Response } from 'express';
+import * as fs from 'fs';
+import { Res } from '@nestjs/common';
+
+@Controller()
+export class FilesController {
+  constructor(private filesService: FilesService) {}
+
+  @Post('files/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async upload(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('password') password: string,
+    @Body('expires_in_days') expiresInDays: number,
+    @Req() req: any,
+  ) {
+    const result = await this.filesService.upload(file, req.user.sub, password, expiresInDays);
+    return {
+      file_id: result.id,
+      download_url: `${process.env.APP_URL || 'http://localhost:3000'}/d/${result.downloadToken}`,
+      expires_at: result.expiresAt,
+    };
+  }
+
+  @Get('files')
+  @UseGuards(JwtAuthGuard)
+  async getFiles(@Query('filter') filter: string, @Req() req: any) {
+    return this.filesService.findByUser(req.user.sub, filter);
+  }
+
+  @Delete('files/:id')
+  @UseGuards(JwtAuthGuard)
+  async deleteFile(@Param('id') id: string, @Req() req: any) {
+    await this.filesService.delete(id, req.user.sub);
+    return { message: 'Fichier supprimé' };
+  }
+
+  @Get('d/:token')
+  async getFileInfo(@Param('token') token: string) {
+    const file = await this.filesService.findByToken(token);
+    if (new Date() > file.expiresAt) throw new ForbiddenException('Ce lien a expiré');
+    return {
+      file_name: file.originalName,
+      size: file.sizeBytes,
+      mime_type: file.mimeType,
+      expires_at: file.expiresAt,
+      has_password: !!file.passwordHash,
+    };
+  }
+
+  @Post('d/:token/download')
+  async downloadFile(
+    @Param('token') token: string,
+    @Body('password') password: string,
+    @Res() res: Response,
+  ) {
+    const file = await this.filesService.findByToken(token);
+    if (new Date() > file.expiresAt) throw new ForbiddenException('Ce lien a expiré');
+
+    if (file.passwordHash) {
+      const valid = await this.filesService.verifyPassword(token, password);
+      if (!valid) throw new ForbiddenException('Mot de passe incorrect');
+    }
+
+    res.setHeader('Content-Disposition', `attachment; filename="${file.originalName}"`);
+    res.setHeader('Content-Type', file.mimeType);
+    fs.createReadStream(file.storagePath).pipe(res);
+  }
+}
