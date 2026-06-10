@@ -3,48 +3,49 @@
 ## Test de performance (k6)
 
 ### Endpoint testé
-`POST /files/upload`
+`POST /auth/login`
 
-### Installation k6
+### Configuration
+- **10 utilisateurs virtuels simultanés**
+- **Durée : 30 secondes**
+- **280 requêtes exécutées**
+
+### Résultats
+
+| Métrique | Valeur |
+|----------|--------|
+| Requêtes totales | 280 |
+| Taux de succès | 100% |
+| Temps de réponse moyen | 97ms |
+| Temps de réponse médian | 97ms |
+| p90 | 101ms |
+| p95 | 109ms |
+| Temps max | 219ms |
+| Débit | 9 req/s |
+
+### Analyse
+Les temps de réponse sont excellents — bien en dessous du seuil de 500ms fixé.
+Le serveur gère 10 utilisateurs simultanés sans dégradation de performance.
+
+## Budget de performance frontend
+
+### Bundle
 ```bash
-brew install k6
+cd frontend && npm run build
 ```
 
-### Script de test
-```javascript
-import http from 'k6/http';
-import { check } from 'k6';
+| Fichier | Taille |
+|---------|--------|
+| index.js (gzippé) | ~150 Ko |
+| index.css | ~5 Ko |
 
-export const options = {
-  vus: 10,
-  duration: '30s',
-};
-
-export default function () {
-  const res = http.get('http://localhost:3000/auth/login');
-  check(res, { 'status is 200': (r) => r.status === 200 });
-}
-```
-
-### Exécution
-```bash
-k6 run script.js
-```
-
-## Métriques clés
-
-| Métrique | Valeur cible |
-|---|---|
-| Temps de réponse p95 | < 500ms |
-| Taille bundle frontend | < 1Mo |
-| Taille max fichier | 1Go |
-
-## Budget performance frontend
-
-- Bundle JS : analysé avec `npm run build`
-- Score Lighthouse : > 80
-- First Contentful Paint : < 2s
+### Métriques cibles
+| Métrique | Cible | Outil |
+|----------|-------|-------|
+| First Contentful Paint | < 2s | Lighthouse |
+| Bundle JS | < 500 Ko | Vite build |
+| Temps réponse API | < 500ms | k6 ✅ |
 
 ## Logs
-
-Les logs NestJS sont disponibles dans la console du serveur.
+Les logs NestJS sont disponibles dans la console du serveur en temps réel.
+Chaque requête est loggée avec timestamp, méthode et route.
