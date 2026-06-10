@@ -1,14 +1,13 @@
 import {
   Controller, Post, Get, Delete, Param, Query,
   UseInterceptors, UploadedFile, Body, Req,
-  UseGuards, ForbiddenException
+  UseGuards, ForbiddenException, Res
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { Response } from 'express';
 import * as fs from 'fs';
-import { Res } from '@nestjs/common';
 
 @Controller()
 export class FilesController {
@@ -22,7 +21,8 @@ export class FilesController {
     @Body('expires_in_days') expiresInDays: number,
     @Req() req: any,
   ) {
-    const result = await this.filesService.upload(file, req.user.sub, password, expiresInDays);
+    const userId = req.user?.sub || null;
+    const result = await this.filesService.upload(file, userId, password, expiresInDays);
     return {
       file_id: result.id,
       download_url: `${process.env.APP_URL || 'http://localhost:3000'}/d/${result.downloadToken}`,
