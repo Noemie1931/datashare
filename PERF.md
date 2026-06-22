@@ -15,12 +15,12 @@
 | Métrique | Valeur | Seuil |
 |----------|--------|-------|
 | Requêtes totales | 280 | — |
-| Taux de succès | 100% | 100% ✅ |
-| Temps moyen | 97ms | < 500ms ✅ |
-| Temps médian | 97ms | < 500ms ✅ |
-| p90 | 101ms | < 500ms ✅ |
-| p95 | 109ms | < 500ms ✅ |
-| Temps max | 219ms | < 500ms ✅ |
+| Taux de succès | 100% | 100% (OK) |
+| Temps moyen | 97ms | < 500ms (OK) |
+| Temps médian | 97ms | < 500ms (OK) |
+| p90 | 101ms | < 500ms (OK) |
+| p95 | 109ms | < 500ms (OK) |
+| Temps max | 219ms | < 500ms (OK) |
 | Débit | 9 req/s | — |
 
 ### Analyse
@@ -32,9 +32,9 @@ Le serveur gère 10 utilisateurs simultanés sans dégradation. Tous les temps d
 
 | Fichier | Taille brute | Taille gzippée |
 |---------|-------------|----------------|
-| index.js | 284 Ko | 92 Ko ✅ |
-| index.css | 1.78 Ko | 0.81 Ko ✅ |
-| index.html | 0.46 Ko | 0.30 Ko ✅ |
+| index.js | 284 Ko | 92 Ko (OK) |
+| index.css | 1.78 Ko | 0.81 Ko (OK) |
+| index.html | 0.46 Ko | 0.30 Ko (OK) |
 | **Total** | **286 Ko** | **93 Ko** |
 
 ### Analyse bundle

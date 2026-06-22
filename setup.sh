@@ -1,26 +1,26 @@
 #!/bin/bash
-echo "🚀 Installation DataShare..."
+echo "Installation DataShare..."
 
 # 1. Lancer PostgreSQL
-echo "📦 Démarrage PostgreSQL..."
+echo "Demarrage PostgreSQL..."
 docker-compose up -d
 sleep 3
 
 # 2. Backend
-echo "⚙️ Installation backend..."
+echo "Installation backend..."
 cd backend
 cp .env.example .env
 npm install
-echo "✅ Backend prêt"
+echo "Backend pret"
 
 # 3. Frontend
-echo "🎨 Installation frontend..."
+echo "Installation frontend..."
 cd ../frontend
 npm install
-echo "✅ Frontend prêt"
+echo "Frontend pret"
 
 echo ""
-echo "✅ Installation terminée !"
+echo "Installation terminee."
 echo ""
 echo "Pour lancer l'application :"
 echo "  Terminal 1 : cd backend && npm run start:dev"

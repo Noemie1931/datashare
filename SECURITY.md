@@ -2,9 +2,10 @@
 
 ## Scan de sécurité
 
-```bash
+\`\`\`bash
 npm audit
-```
+\`\`\`
+
 
 ## Mesures de sécurité implémentées
 

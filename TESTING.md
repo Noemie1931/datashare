@@ -4,22 +4,22 @@
 
 | Fonctionnalité | Type | Critère d'acceptation | Résultat |
 |---|---|---|---|
-| Register | Unitaire | Retourne user + token JWT | ✅ |
-| Login succès | Unitaire | Retourne token | ✅ |
-| Login mauvais MDP | Unitaire | Lève UnauthorizedException | ✅ |
-| Login user inexistant | Unitaire | Lève UnauthorizedException | ✅ |
-| Upload fichier | Unitaire | Retourne FileEntity | ✅ |
-| Trouver fichier par token | Unitaire | Retourne FileEntity | ✅ |
-| Token invalide | Unitaire | Lève NotFoundException | ✅ |
-| Supprimer fichier | Unitaire | Supprime sans erreur | ✅ |
-| Fichier inexistant | Unitaire | Lève NotFoundException | ✅ |
-| Créer utilisateur | Unitaire | Retourne user créé | ✅ |
-| Email dupliqué | Unitaire | Lève ConflictException | ✅ |
+| Register | Unitaire | Retourne user + token JWT | PASS |
+| Login succès | Unitaire | Retourne token | PASS |
+| Login mauvais MDP | Unitaire | Lève UnauthorizedException | PASS |
+| Login user inexistant | Unitaire | Lève UnauthorizedException | PASS |
+| Upload fichier | Unitaire | Retourne FileEntity | PASS |
+| Trouver fichier par token | Unitaire | Retourne FileEntity | PASS |
+| Token invalide | Unitaire | Lève NotFoundException | PASS |
+| Supprimer fichier | Unitaire | Supprime sans erreur | PASS |
+| Fichier inexistant | Unitaire | Lève NotFoundException | PASS |
+| Créer utilisateur | Unitaire | Retourne user créé | PASS |
+| Email dupliqué | Unitaire | Lève ConflictException | PASS |
 
 ## Résultats couverture
 
-- **18 tests unitaires — tous passent**
-- **Couverture globale : 81%** (objectif : 70% ✅)
+- 18 tests unitaires — tous passent
+- Couverture globale : 81% (objectif : 70% atteint)
 - `auth.service.ts` : 100%
 - `users.service.ts` : 100%
 - `files.service.ts` : 97%
@@ -28,9 +28,9 @@
 
 | Scénario | Description | Résultat |
 |---|---|---|
-| Scénario 1 | Page accueil accessible | ✅ |
-| Scénario 2 | Formulaire login visible et fonctionnel | ✅ |
-| Scénario 3 | Page téléchargement lien invalide | ✅ |
+| Scénario 1 | Page accueil accessible | PASS |
+| Scénario 2 | Formulaire login visible et fonctionnel | PASS |
+| Scénario 3 | Page téléchargement lien invalide | PASS |
 
 ## Exécution
 
