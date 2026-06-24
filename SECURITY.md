@@ -1,29 +1,34 @@
-# SECURITY.md — Sécurité DataShare
+# Sécurité — DataShare
 
-## Scan de sécurité
-
-\`\`\`bash
-npm audit
-\`\`\`
-
-
-## Mesures de sécurité implémentées
+## Ce qui est en place
 
 | Mesure | Détail |
 |---|---|
-| Authentification JWT | Tokens signés avec secret, expiration 7 jours |
-| Hashage mots de passe | bcrypt avec salt factor 10 |
-| Validation des fichiers | Taille max 1Go, types contrôlés |
-| CORS | Limité à http://localhost:5173 |
-| Tokens de téléchargement | UUID v4 non prédictible |
-| Expiration automatique | Fichiers supprimés après 7 jours |
+| Authentification | JWT signé, token valable 7 jours |
+| Mots de passe | hashés avec bcrypt (10 rounds), jamais stockés en clair |
+| Liens de téléchargement | token UUID v4, impossible à deviner |
+| Mot de passe sur un fichier | optionnel, également hashé bcrypt |
+| Upload | taille limitée à 1 Go |
+| Expiration | les fichiers sont supprimés après 1 à 7 jours selon le choix |
+| CORS | restreint à `http://localhost:5173` en dev |
 
-## Résultats npm audit
+## npm audit
 
-Lancer `npm audit` dans le dossier backend pour voir les vulnérabilités.
+Lancé dans `backend/` :
 
-## Décisions
+```
+24 vulnerabilities (18 moderate, 6 high)
+```
 
-- Les vulnérabilités de faible sévérité des dépendances de développement sont acceptées.
-- Le JWT_SECRET doit être changé en production.
-- En production, CORS doit être limité au domaine de production.
+Elles viennent toutes de dépendances transitives de NestJS (`@nestjs/core`,
+`@nestjs/platform-express`, etc.), pas de mon code. Je ne lance pas `npm audit fix --force`
+car ça casserait des versions majeures de NestJS pour un projet pédagogique. En conditions
+réelles il faudrait suivre les mises à jour de NestJS et monter de version quand un correctif
+est dispo.
+
+## À faire avant une mise en production
+
+- Changer le `JWT_SECRET` (actuellement en dur, à passer en variable d'environnement)
+- Limiter le CORS au vrai domaine de prod
+- Servir le tout en HTTPS
+- Mettre à jour les dépendances NestJS vulnérables
