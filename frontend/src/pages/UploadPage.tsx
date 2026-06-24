@@ -39,14 +39,6 @@ export default function UploadPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const reset = () => {
-    setFile(null);
-    setPassword('');
-    setDays(1);
-    setDownloadUrl('');
-    setError('');
-  };
-
   return (
     <div style={bg}>
       {/* Idle — no file selected */}

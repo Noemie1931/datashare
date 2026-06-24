@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-export default function Header({ isLoggedIn, onLogout }: { isLoggedIn: boolean; onLogout: () => void }) {
+export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
   const navigate = useNavigate();
 
   return (

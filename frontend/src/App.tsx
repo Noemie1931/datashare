@@ -12,7 +12,7 @@ function AppRoutes({ isLoggedIn, onLogin, onLogout }: { isLoggedIn: boolean; onL
 
   return (
     <>
-      {!hideHeader && <Header isLoggedIn={isLoggedIn} onLogout={onLogout} />}
+      {!hideHeader && <Header isLoggedIn={isLoggedIn} />}
       <Routes>
         <Route path="/" element={<UploadPage />} />
         <Route path="/login" element={<LoginPage onLogin={onLogin} />} />

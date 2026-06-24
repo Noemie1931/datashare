@@ -1,59 +1,43 @@
-# PERF.md — Performance DataShare
+# Performance — DataShare
 
-## Test de performance backend (k6)
+## Backend sous charge (k6)
 
-### Endpoint testé
-`POST /auth/login`
+J'ai testé l'endpoint le plus sollicité, `POST /auth/login` (il fait un appel base +
+un compare bcrypt, donc c'est le plus coûteux), avec k6 : 10 utilisateurs en parallèle
+pendant 30 secondes.
 
-### Configuration
-- 10 utilisateurs virtuels simultanés
-- Durée : 30 secondes
-- 280 requêtes exécutées
+Résultats (`k6 run k6_test.js`) :
 
-### Résultats
+| Métrique | Valeur |
+|---|---|
+| Requêtes | 274 (~8,9 req/s) |
+| Succès | 100 % (548/548 checks) |
+| Temps moyen | 107 ms |
+| Médiane | 101 ms |
+| p90 | 111 ms |
+| p95 | 157 ms |
+| Max | 490 ms |
 
-| Métrique | Valeur | Seuil |
-|----------|--------|-------|
-| Requêtes totales | 280 | — |
-| Taux de succès | 100% | 100% (OK) |
-| Temps moyen | 97ms | < 500ms (OK) |
-| Temps médian | 97ms | < 500ms (OK) |
-| p90 | 101ms | < 500ms (OK) |
-| p95 | 109ms | < 500ms (OK) |
-| Temps max | 219ms | < 500ms (OK) |
-| Débit | 9 req/s | — |
+Tout reste sous la barre des 500 ms que je m'étais fixée, et aucune requête n'a échoué.
+Le max à 490 ms correspond aux premières requêtes (bcrypt qui chauffe), la médiane à
+101 ms est plus représentative.
 
-### Analyse
-Le serveur gère 10 utilisateurs simultanés sans dégradation. Tous les temps de réponse sont bien en dessous du seuil de 500ms. Aucune requête échouée.
+## Frontend (build Vite)
 
-## Budget de performance frontend
+Sortie de `npm run build` :
 
-### Résultats du build Vite
+| Fichier | Brut | Gzippé |
+|---|---|---|
+| index.js | 298 Ko | 95,6 Ko |
+| index.css | 0,86 Ko | 0,48 Ko |
+| index.html | 0,46 Ko | 0,30 Ko |
 
-| Fichier | Taille brute | Taille gzippée |
-|---------|-------------|----------------|
-| index.js | 284 Ko | 92 Ko (OK) |
-| index.css | 1.78 Ko | 0.81 Ko (OK) |
-| index.html | 0.46 Ko | 0.30 Ko (OK) |
-| **Total** | **286 Ko** | **93 Ko** |
+Build en ~130 ms. Le bundle JS gzippé tient sous 100 Ko, c'est largement correct pour
+une SPA (React + React Router + Axios). Vite fait le tree-shaking tout seul.
 
-### Analyse bundle
-Le bundle JS de 92 Ko gzippé est excellent (seuil recommandé < 200 Ko).
-React + Axios + React Router = dépendances légères bien tree-shakées par Vite.
+## Pistes si le projet grossit
 
-## Métriques clés
-
-| Métrique | Valeur mesurée |
-|----------|---------------|
-| Temps réponse API (avg) | 97ms |
-| Temps réponse API (p95) | 109ms |
-| Bundle JS gzippé | 92 Ko |
-| Build time | 327ms |
-| Taux de succès sous charge | 100% |
-
-## Actions d'optimisation possibles
-
-- Activer la compression gzip sur NestJS en production
-- Mettre en place un CDN pour les assets statiques
-- Ajouter du cache HTTP sur les endpoints de téléchargement
-- Implémenter la pagination sur GET /files pour les gros historiques
+- Activer la compression gzip côté NestJS en prod
+- Pagination sur `GET /files` quand un compte a beaucoup de fichiers
+- Cache HTTP sur les téléchargements
+- CDN pour les assets statiques
