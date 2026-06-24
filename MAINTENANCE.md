@@ -28,7 +28,7 @@ npm audit fix
 |---|---|---|
 | JWT_SECRET exposé | Critique | Variables d'environnement en production |
 | Dépendances obsolètes | Moyen | Audit mensuel |
-| Espace disque fichiers | Moyen | Cron de nettoyage quotidien |
+| Espace disque fichiers | Moyen | À prévoir : cron de nettoyage des fichiers expirés (pas encore en place) |
 | Base de données corrompue | Élevé | Sauvegardes régulières |
 
 ## Procédures
