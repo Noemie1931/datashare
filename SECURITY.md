@@ -11,6 +11,8 @@
 | Upload | taille limitée à 1 Go (limite Multer) |
 | Expiration | passé 1 à 7 jours (selon le choix), le lien est refusé au téléchargement |
 | CORS | restreint à `http://localhost:5173` en dev |
+| Identifiants vides | refusés côté client et côté serveur |
+| Token invalide ou expiré | une réponse 401 déconnecte automatiquement et renvoie vers la connexion |
 
 ## npm audit
 
