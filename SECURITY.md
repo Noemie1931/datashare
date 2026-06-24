@@ -32,3 +32,6 @@ est dispo.
 - Limiter le CORS au vrai domaine de prod
 - Servir le tout en HTTPS
 - Mettre à jour les dépendances NestJS vulnérables
+- Ajouter un nettoyage automatique (cron) qui supprime du disque les fichiers
+  expirés : aujourd'hui le lien est bloqué après expiration, mais le fichier
+  reste stocké sur le serveur
