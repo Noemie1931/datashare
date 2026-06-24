@@ -263,7 +263,7 @@ const fileRow: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'space-between',
   padding: '16px 20px',
-  background: '#FFFCFA',
+  background: '#FCEEE6',
   border: '1px solid #F5EBE3',
   borderRadius: '12px',
   boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
