@@ -26,6 +26,7 @@ export class FilesController {
     const result = await this.filesService.upload(file, userId, password, expiresInDays);
     return {
       file_id: result.id,
+      download_token: result.downloadToken,
       download_url: `${process.env.APP_URL || 'http://localhost:3000'}/d/${result.downloadToken}`,
       expires_at: result.expiresAt,
     };
@@ -34,7 +35,16 @@ export class FilesController {
   @Get('files')
   @UseGuards(JwtAuthGuard)
   async getFiles(@Query('filter') filter: string, @Req() req: any) {
-    return this.filesService.findByUser(req.user.sub, filter);
+    const files = await this.filesService.findByUser(req.user.sub, filter);
+    return files.map((file) => ({
+      id: file.id,
+      originalName: file.originalName,
+      sizeBytes: file.sizeBytes,
+      uploadedAt: file.uploadedAt,
+      expiresAt: file.expiresAt,
+      downloadToken: file.downloadToken,
+      hasPassword: !!file.passwordHash,
+    }));
   }
 
   @Delete('files/:id')

@@ -2,7 +2,7 @@
 
 ## US concernée : US05 — Consultation de l'historique (MySpacePage)
 
-### Tâches confiées à l'IA (Claude)
+### Tâches confiées à l'IA
 - Génération du composant MySpacePage.tsx avec filtres Tout/Actifs/Expirés
 - Implémentation de la logique de suppression avec confirmation
 - Génération de la fonction copyLink pour partager les liens

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 interface FileItem {
@@ -8,14 +9,21 @@ interface FileItem {
   uploadedAt: string;
   expiresAt: string;
   downloadToken: string;
+  hasPassword?: boolean;
 }
 
 type Filter = 'all' | 'active' | 'expired';
 
-export default function MySpacePage() {
+const FILTERS: { key: Filter; label: string }[] = [
+  { key: 'all', label: 'Tous' },
+  { key: 'active', label: 'Actifs' },
+  { key: 'expired', label: 'Expiré' },
+];
+
+export default function MySpacePage({ onLogout }: { onLogout: () => void }) {
+  const navigate = useNavigate();
   const [files, setFiles] = useState<FileItem[]>([]);
   const [filter, setFilter] = useState<Filter>('all');
-  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const loadFiles = async () => {
     const res = await api.get(`/files?filter=${filter}`);
@@ -30,97 +38,120 @@ export default function MySpacePage() {
     loadFiles();
   };
 
-  const copyLink = (file: FileItem) => {
-    navigator.clipboard.writeText(`${window.location.origin}/d/${file.downloadToken}`);
-    setCopiedId(file.id);
-    setTimeout(() => setCopiedId(null), 2000);
+  const openFile = (file: FileItem) => {
+    window.open(`${window.location.origin}/d/${file.downloadToken}`, '_blank');
   };
 
-  const FILTERS: { key: Filter; label: string }[] = [
-    { key: 'all', label: 'Tout' },
-    { key: 'active', label: 'Actifs' },
-    { key: 'expired', label: 'Expirés' },
-  ];
+  const expiryLabel = (dateStr: string) => {
+    const d = Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86400000);
+    if (d <= 0) return null;
+    if (d === 1) return 'Expire demain';
+    return `Expire dans ${d} jours`;
+  };
 
   return (
     <div style={layout}>
-      {/* Left gradient panel */}
+      {/* Sidebar */}
       <aside style={sidebar}>
-        <div style={{ marginTop: 'auto' }}>
-          <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'white', marginBottom: '8px', letterSpacing: '-0.5px' }}>
-            Mon espace
-          </h1>
-          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.5' }}>
-            Gérez vos fichiers partagés, copiez les liens ou supprimez-les.
-          </p>
+        <div style={{ padding: '24px 20px' }}>
+          <span
+            onClick={() => navigate('/')}
+            style={{ fontWeight: 700, fontSize: '18px', color: 'white', cursor: 'pointer', letterSpacing: '-0.3px' }}
+          >
+            DataShare
+          </span>
         </div>
-        <div style={{ marginTop: '32px', fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>
-          {files.length} fichier{files.length !== 1 ? 's' : ''}
+        <div style={{ padding: '12px 16px' }}>
+          <button style={sidebarTab}>Mes fichiers</button>
+        </div>
+        <div style={{ marginTop: 'auto', padding: '20px', fontSize: '11px', color: 'rgba(255,255,255,0.75)' }}>
+          Copyright DataShare® 2025
         </div>
       </aside>
 
-      {/* Right content panel */}
-      <main style={content}>
-        <div style={{ padding: '32px 36px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 style={{ margin: 0 }}>Mes fichiers</h2>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {FILTERS.map(f => (
-                <button
-                  key={f.key}
-                  onClick={() => setFilter(f.key)}
-                  style={filterBtn(filter === f.key)}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
+      {/* Right side */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#FDF8F4' }}>
+        {/* Top bar */}
+        <div style={topBar}>
+          <button onClick={() => navigate('/')} style={darkPill}>
+            Ajouter des fichiers
+          </button>
+          <button onClick={onLogout} style={logoutBtn}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Déconnexion
+          </button>
+        </div>
+
+        {/* Content */}
+        <main style={{ padding: '28px 36px' }}>
+          <h2 style={{ margin: '0 0 20px', fontSize: '22px', fontWeight: 700, color: '#111' }}>Mes fichiers</h2>
+
+          {/* Switch */}
+          <div style={switchContainer}>
+            {FILTERS.map(f => (
+              <button key={f.key} onClick={() => setFilter(f.key)} style={switchSegment(filter === f.key)}>
+                {f.label}
+              </button>
+            ))}
           </div>
 
-          {files.length === 0 ? (
-            <div style={emptyState}>
-              <span style={{ fontSize: '40px' }}>📭</span>
-              <p style={{ marginTop: '12px', color: '#888', fontSize: '14px' }}>Aucun fichier trouvé</p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {files.map(file => {
+          {/* File list */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
+            {files.length === 0 ? (
+              <p style={{ color: '#aaa', fontSize: '14px' }}>Aucun fichier trouvé</p>
+            ) : (
+              files.map(file => {
                 const expired = new Date(file.expiresAt) < new Date();
                 return (
                   <div key={file.id} style={fileRow}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
-                      <span style={{ fontSize: '22px', flexShrink: 0 }}>📄</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                      </svg>
                       <div style={{ minWidth: 0 }}>
                         <p style={{ fontWeight: 600, fontSize: '14px', color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {file.originalName}
                         </p>
-                        <p style={{ fontSize: '12px', color: expired ? '#e05a4e' : '#888', marginTop: '2px' }}>
-                          {expired ? '⚠ Expiré' : `Expire le ${new Date(file.expiresAt).toLocaleDateString('fr-FR')}`}
-                          {' · '}{(file.sizeBytes / 1024).toFixed(1)} Ko
+                        <p style={{ fontSize: '12px', color: expired ? '#E07A3A' : '#E07A3A', marginTop: '2px' }}>
+                          {expired ? 'Expiré' : expiryLabel(file.expiresAt)}
                         </p>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-                      <button
-                        onClick={() => copyLink(file)}
-                        style={actionBtn('#f0f0f0', '#444')}
-                      >
-                        {copiedId === file.id ? '✓ Copié' : 'Partager'}
-                      </button>
-                      <button
-                        onClick={() => deleteFile(file.id)}
-                        style={actionBtn('#fff0ef', '#e05a4e')}
-                      >
-                        Supprimer
-                      </button>
-                    </div>
+
+                    {expired ? (
+                      <p style={{ fontSize: '13px', color: '#aaa', flexShrink: 0 }}>
+                        Ce fichier à expiré, il n'est plus stocké chez nous
+                      </p>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+                        {file.hasPassword && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                          </svg>
+                        )}
+                        <button onClick={() => deleteFile(file.id)} style={outlineBtn}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                          </svg>
+                          Supprimer
+                        </button>
+                        <button onClick={() => openFile(file)} style={outlineBtn}>
+                          Accéder
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                          </svg>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
-              })}
-            </div>
-          )}
-        </div>
-      </main>
+              })
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
@@ -131,68 +162,105 @@ const layout: React.CSSProperties = {
 };
 
 const sidebar: React.CSSProperties = {
-  width: '280px',
+  width: '200px',
   flexShrink: 0,
-  background: 'linear-gradient(160deg, #f5a89a 0%, #e05a4e 100%)',
-  padding: '100px 28px 40px',
+  background: 'linear-gradient(172.84deg, #FFB88C 2.29%, #DE6262 97.71%)',
   display: 'flex',
   flexDirection: 'column',
+  minHeight: '100vh',
+};
+
+const sidebarTab: React.CSSProperties = {
+  padding: '8px 18px',
+  background: '#FDF0E9',
+  color: '#333',
+  border: 'none',
+  borderRadius: '999px',
+  cursor: 'pointer',
+  fontSize: '13px',
+  fontWeight: 600,
+  width: '100%',
+  textAlign: 'left',
+};
+
+const topBar: React.CSSProperties = {
+  display: 'flex',
   justifyContent: 'flex-end',
-};
-
-const content: React.CSSProperties = {
-  flex: 1,
-  background: '#f9f9f9',
-  overflowY: 'auto',
-  paddingTop: '64px',
-};
-
-const emptyState: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
-  padding: '60px 20px',
-  background: 'white',
-  borderRadius: '12px',
-  border: '1px solid #eee',
+  gap: '12px',
+  height: '64px',
+  padding: '0 28px',
+  background: '#FCEEE6',
 };
+
+const darkPill: React.CSSProperties = {
+  padding: '9px 18px',
+  background: '#1a1a1a',
+  color: 'white',
+  border: 'none',
+  borderRadius: '999px',
+  cursor: 'pointer',
+  fontSize: '13px',
+  fontWeight: 500,
+};
+
+const logoutBtn: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  padding: '9px 14px',
+  background: 'transparent',
+  color: '#E07A3A',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '13px',
+  fontWeight: 500,
+};
+
+const switchContainer: React.CSSProperties = {
+  display: 'inline-flex',
+  gap: '2px',
+  padding: '3px',
+  background: '#FBE9E0',
+  borderRadius: '999px',
+};
+
+function switchSegment(active: boolean): React.CSSProperties {
+  return {
+    padding: '6px 20px',
+    background: active ? '#E8836B' : 'transparent',
+    color: active ? 'white' : '#888',
+    border: 'none',
+    borderRadius: '999px',
+    cursor: 'pointer',
+    fontSize: '13px',
+    fontWeight: active ? 600 : 500,
+    transition: 'background 0.15s',
+  };
+}
 
 const fileRow: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '14px 18px',
-  background: 'white',
+  padding: '16px 20px',
+  background: '#FFFCFA',
+  border: '1px solid #F5EBE3',
   borderRadius: '12px',
-  boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-  border: '1px solid #f0f0f0',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
   gap: '12px',
 };
 
-function filterBtn(active: boolean): React.CSSProperties {
-  return {
-    padding: '6px 14px',
-    background: active ? '#e05a4e' : '#f0f0f0',
-    color: active ? 'white' : '#555',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '13px',
-    fontWeight: active ? 600 : 400,
-    transition: 'background 0.15s',
-  };
-}
-
-function actionBtn(bg: string, color: string): React.CSSProperties {
-  return {
-    padding: '7px 14px',
-    background: bg,
-    color,
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '13px',
-    fontWeight: 500,
-  };
-}
+const outlineBtn: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  padding: '7px 14px',
+  background: 'white',
+  color: '#E07A3A',
+  border: '1px solid #F0B89A',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  fontSize: '13px',
+  fontWeight: 500,
+};

@@ -17,7 +17,7 @@ describe('DataShare E2E', () => {
 
   it('Scénario 3 — Page téléchargement lien invalide', () => {
     cy.visit('http://localhost:5173/d/token-invalide-123')
-    cy.contains('invalide').should('be.visible')
+    cy.contains("Ce fichier n'est plus disponible").should('be.visible')
   })
 
 })

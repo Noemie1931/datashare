@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FileEntity } from './file.entity';
@@ -19,7 +19,10 @@ export class FilesService {
     password?: string,
     expiresInDays?: number,
   ): Promise<FileEntity> {
-    const days = expiresInDays || 7;
+    if (password && password.length < 6) {
+      throw new BadRequestException('Mot de passe : minimum 6 caractères.');
+    }
+    const days = Number(expiresInDays) || 7;
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + days);
 
