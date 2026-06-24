@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 describe('AuthService', () => {
@@ -37,6 +37,16 @@ describe('AuthService', () => {
       const result = await authService.register('test@test.com', 'password123');
       expect(result).toHaveProperty('access_token', 'mock_token');
       expect(result.user.email).toBe('test@test.com');
+    });
+
+    it('should throw BadRequestException if email is invalid', async () => {
+      await expect(authService.register('pas-un-email', 'password123'))
+        .rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw BadRequestException if password is too short', async () => {
+      await expect(authService.register('test@test.com', '123'))
+        .rejects.toThrow(BadRequestException);
     });
   });
 

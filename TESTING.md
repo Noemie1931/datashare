@@ -12,6 +12,8 @@ dépendre de la base.
 
 **Authentification (`auth.service`)**
 - Inscription : renvoie bien l'utilisateur et un token JWT
+- Inscription avec un email invalide : `BadRequestException`
+- Inscription avec un mot de passe trop court : `BadRequestException`
 - Connexion réussie : renvoie un token
 - Mauvais mot de passe : `UnauthorizedException`
 - Utilisateur inexistant : `UnauthorizedException`
@@ -22,28 +24,30 @@ dépendre de la base.
 
 **Fichiers (`files.service`)**
 - Upload : renvoie l'entité `FileEntity`
+- Upload avec un mot de passe trop court : `BadRequestException`
 - Recherche par token : renvoie le fichier correspondant
 - Token inconnu : `NotFoundException`
-- Suppression : se fait sans erreur
+- Filtres tous / actifs / expirés
+- Vérification du mot de passe (avec et sans mot de passe)
+- Suppression (avec et sans fichier physique sur le disque)
 - Suppression d'un fichier inexistant : `NotFoundException`
 
-Au total **18 tests**, tous au vert (3 suites).
+Au total **22 tests**, tous au vert (3 suites).
 
 ## Couverture
 
 ```
 File                | % Stmts | % Lines |
 --------------------|---------|---------|
-All files           |   79.4  |   82.0  |
-  auth.service.ts   |   92.0  |   90.5  |
+All files           |   83.2  |   86.5  |
+  auth.service.ts   |  100.0  |  100.0  |
   users.service.ts  |  100.0  |  100.0  |
-  files.service.ts  |   95.7  |   95.2  |
+  files.service.ts  |  100.0  |  100.0  |
 ```
 
-L'objectif fixé était 70%, donc c'est atteint. La moyenne globale est un peu tirée
-vers le bas par les fichiers de configuration (modules, `main.ts`, stratégie JWT) qui
-ne contiennent pas de logique à tester — les services métier, eux, sont au-dessus de
-90%.
+Les trois services métier sont à 100%. La moyenne globale (83%) est tirée vers le bas
+par les fichiers de configuration (modules, `main.ts`, guard et stratégie JWT) qui ne
+contiennent pas de logique à tester. L'objectif de 70% est largement dépassé.
 
 ## Tests end-to-end (Cypress)
 

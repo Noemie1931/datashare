@@ -2,9 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FilesService } from './files.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { FileEntity } from './file.entity';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as bcrypt from 'bcrypt';
+
+jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
+  existsSync: jest.fn(),
+  unlinkSync: jest.fn(),
+}));
 
 describe('FilesService', () => {
   let service: FilesService;
@@ -95,8 +101,28 @@ describe('FilesService', () => {
     expect(result.originalName).toBe('test.txt');
   });
 
+  it('should throw BadRequestException if file password is too short', async () => {
+    const mockMulterFile = {
+      originalname: 'test.txt',
+      path: '/uploads/test.txt',
+      mimetype: 'text/plain',
+      size: 100,
+    } as Express.Multer.File;
+
+    await expect(service.upload(mockMulterFile, 'user-123', '123'))
+      .rejects.toThrow(BadRequestException);
+  });
+
   it('should delete a file without physical file', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
     await expect(service.delete('123', 'user-123')).resolves.not.toThrow();
+  });
+
+  it('should delete the physical file when it exists on disk', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+    (fs.unlinkSync as jest.Mock).mockReturnValue(undefined);
+    await service.delete('123', 'user-123');
+    expect(fs.unlinkSync).toHaveBeenCalledWith(mockFile.storagePath);
   });
 
   it('should throw NotFoundException when deleting non-existent file', async () => {
