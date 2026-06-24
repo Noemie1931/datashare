@@ -184,6 +184,7 @@ const sidebar: React.CSSProperties = {
   width: '200px',
   flexShrink: 0,
   background: 'linear-gradient(172.84deg, #FFB88C 2.29%, #DE6262 97.71%)',
+  borderRight: '2px solid rgba(98, 54, 26, 0.15)',
   display: 'flex',
   flexDirection: 'column',
   minHeight: '100vh',
