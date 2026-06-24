@@ -19,8 +19,8 @@ Résultats (`k6 run k6_test.js`) :
 | Max | 490 ms |
 
 Tout reste sous la barre des 500 ms que je m'étais fixée, et aucune requête n'a échoué.
-Le max à 490 ms correspond aux premières requêtes (bcrypt qui chauffe), la médiane à
-101 ms est plus représentative.
+Le maximum à 490 ms correspond aux toutes premières requêtes, le temps que bcrypt se mette
+en route ; la médiane à 101 ms est plus représentative du comportement réel.
 
 ## Frontend (build Vite)
 
@@ -32,8 +32,8 @@ Sortie de `npm run build` :
 | index.css | 0,86 Ko | 0,48 Ko |
 | index.html | 0,46 Ko | 0,30 Ko |
 
-Build en ~130 ms. Le bundle JS gzippé tient sous 100 Ko, c'est largement correct pour
-une SPA (React + React Router + Axios). Vite fait le tree-shaking tout seul.
+Build en ~130 ms. Le bundle JS gzippé tient sous 100 Ko, ce qui est largement correct
+pour une SPA (React + React Router + Axios). Vite se charge du tree-shaking automatiquement.
 
 ## Pistes si le projet grossit
 
