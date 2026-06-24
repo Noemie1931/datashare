@@ -11,6 +11,10 @@ export default function LoginPage({ onLogin }: { onLogin: () => void }) {
 
   const handleSubmit = async () => {
     setError('');
+    if (!email || !password) {
+      setError('Veuillez saisir votre email et votre mot de passe.');
+      return;
+    }
     if (isRegister) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
