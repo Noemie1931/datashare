@@ -124,7 +124,7 @@ export default function MySpacePage({ onLogout }: { onLogout: () => void }) {
 
                     {expired ? (
                       <p style={{ fontSize: '13px', color: '#aaa', flexShrink: 0 }}>
-                        Ce fichier à expiré, il n'est plus stocké chez nous
+                        Ce fichier a expiré, il n'est plus stocké chez nous
                       </p>
                     ) : (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
