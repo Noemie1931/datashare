@@ -20,18 +20,15 @@ Lancé dans `backend/` :
 24 vulnerabilities (18 moderate, 6 high)
 ```
 
-Elles viennent toutes de dépendances transitives de NestJS (`@nestjs/core`,
-`@nestjs/platform-express`, etc.), pas de mon code. Je ne lance pas `npm audit fix --force`
-car ça casserait des versions majeures de NestJS pour un projet pédagogique. En conditions
-réelles il faudrait suivre les mises à jour de NestJS et monter de version quand un correctif
-est dispo.
+Toutes dans des dépendances de NestJS (`@nestjs/core`, `@nestjs/platform-express`...),
+rien dans mon code. Je fais pas `npm audit fix --force` parce que ça casse des versions
+majeures de Nest. En prod il faudrait juste suivre les mises à jour de Nest.
 
-## À faire avant une mise en production
+## Avant la prod
 
-- Changer le `JWT_SECRET` (actuellement en dur, à passer en variable d'environnement)
-- Limiter le CORS au vrai domaine de prod
-- Servir le tout en HTTPS
-- Mettre à jour les dépendances NestJS vulnérables
-- Ajouter un nettoyage automatique (cron) qui supprime du disque les fichiers
-  expirés : aujourd'hui le lien est bloqué après expiration, mais le fichier
-  reste stocké sur le serveur
+- Sortir le `JWT_SECRET` du code (variable d'env)
+- CORS sur le vrai domaine
+- HTTPS
+- Monter les versions de Nest
+- Un cron pour virer les fichiers expirés du disque (pour l'instant le lien est
+  bloqué mais le fichier reste là)
