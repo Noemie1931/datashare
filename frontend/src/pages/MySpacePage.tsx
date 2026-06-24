@@ -116,7 +116,7 @@ export default function MySpacePage({ onLogout }: { onLogout: () => void }) {
                         <p style={{ fontWeight: 600, fontSize: '14px', color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {file.originalName}
                         </p>
-                        <p style={{ fontSize: '12px', color: '#111', marginTop: '2px' }}>
+                        <p style={{ fontSize: '12px', color: expired ? '#c0392b' : '#111', marginTop: '2px' }}>
                           {expired ? 'Expiré' : expiryLabel(file.expiresAt)}
                         </p>
                       </div>
