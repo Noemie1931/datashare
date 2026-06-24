@@ -1,46 +1,67 @@
-# TESTING.md — Plan de tests DataShare
+# Plan de tests — DataShare
+
+J'ai concentré les tests unitaires sur la logique métier : l'authentification, la
+gestion des utilisateurs et celle des fichiers. C'est là que se trouvent les règles
+importantes (hash du mot de passe, unicité de l'email, vérification du token) et donc
+le plus de risques de régression.
 
 ## Tests unitaires
 
-| Fonctionnalité | Type | Critère d'acceptation | Résultat |
-|---|---|---|---|
-| Register | Unitaire | Retourne user + token JWT | PASS |
-| Login succès | Unitaire | Retourne token | PASS |
-| Login mauvais MDP | Unitaire | Lève UnauthorizedException | PASS |
-| Login user inexistant | Unitaire | Lève UnauthorizedException | PASS |
-| Upload fichier | Unitaire | Retourne FileEntity | PASS |
-| Trouver fichier par token | Unitaire | Retourne FileEntity | PASS |
-| Token invalide | Unitaire | Lève NotFoundException | PASS |
-| Supprimer fichier | Unitaire | Supprime sans erreur | PASS |
-| Fichier inexistant | Unitaire | Lève NotFoundException | PASS |
-| Créer utilisateur | Unitaire | Retourne user créé | PASS |
-| Email dupliqué | Unitaire | Lève ConflictException | PASS |
+Les services sont testés avec Jest, en mockant le repository TypeORM pour ne pas
+dépendre de la base.
 
-## Résultats couverture
+**Authentification (`auth.service`)**
+- Inscription : renvoie bien l'utilisateur et un token JWT
+- Connexion réussie : renvoie un token
+- Mauvais mot de passe : `UnauthorizedException`
+- Utilisateur inexistant : `UnauthorizedException`
 
-- 18 tests unitaires — tous passent
-- Couverture globale : 81% (objectif : 70% atteint)
-- `auth.service.ts` : 100%
-- `users.service.ts` : 100%
-- `files.service.ts` : 97%
+**Utilisateurs (`users.service`)**
+- Création d'un utilisateur
+- Email déjà pris : `ConflictException`
 
-## Tests E2E (Cypress)
+**Fichiers (`files.service`)**
+- Upload : renvoie l'entité `FileEntity`
+- Recherche par token : renvoie le fichier correspondant
+- Token inconnu : `NotFoundException`
+- Suppression : se fait sans erreur
+- Suppression d'un fichier inexistant : `NotFoundException`
 
-| Scénario | Description | Résultat |
-|---|---|---|
-| Scénario 1 | Page accueil accessible | PASS |
-| Scénario 2 | Formulaire login visible et fonctionnel | PASS |
-| Scénario 3 | Page téléchargement lien invalide | PASS |
+Au total **18 tests**, tous au vert (3 suites).
 
-## Exécution
+## Couverture
+
+```
+File                | % Stmts | % Lines |
+--------------------|---------|---------|
+All files           |   79.4  |   82.0  |
+  auth.service.ts   |   92.0  |   90.5  |
+  users.service.ts  |  100.0  |  100.0  |
+  files.service.ts  |   95.7  |   95.2  |
+```
+
+L'objectif fixé était 70%, donc c'est atteint. La moyenne globale est un peu tirée
+vers le bas par les fichiers de configuration (modules, `main.ts`, stratégie JWT) qui
+ne contiennent pas de logique à tester — les services métier, eux, sont au-dessus de
+90%.
+
+## Tests end-to-end (Cypress)
+
+Trois parcours côté navigateur pour valider que les pages répondent :
+
+- La page d'accueil s'affiche et propose de se connecter
+- Le formulaire de connexion est bien présent et utilisable
+- Un lien de téléchargement invalide affiche le bon message d'erreur
+
+## Lancer les tests
 
 ```bash
-# Tests unitaires
+# unitaires
 cd backend && npm run test
 
-# Rapport de couverture
+# avec le rapport de couverture
 cd backend && npm run test:cov
 
-# Tests E2E
+# end-to-end
 cd frontend && npx cypress run --browser chrome
 ```
