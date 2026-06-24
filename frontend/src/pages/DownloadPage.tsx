@@ -67,8 +67,19 @@ export default function DownloadPage() {
       a.href = url;
       a.download = fileInfo.file_name;
       a.click();
-    } catch {
-      setError('Mot de passe incorrect ou lien expiré.');
+    } catch (e: any) {
+      let message = 'Le téléchargement a échoué, réessayez.';
+      try {
+        const data = e.response?.data;
+        if (data instanceof Blob) {
+          message = JSON.parse(await data.text()).message || message;
+        } else if (data?.message) {
+          message = data.message;
+        }
+      } catch {
+        // on garde le message par défaut
+      }
+      setError(message);
     }
     setDownloading(false);
   };
