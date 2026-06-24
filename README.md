@@ -58,9 +58,9 @@ npm run test:cov    # couverture de code
 
 ## Fonctionnalités
 
-- Upload de fichiers (max 1Go)
+- Upload de fichiers (max 1 Go)
 - Lien de téléchargement unique
-- Protection par mot de passe
-- Expiration automatique (1-7 jours)
+- Protection par mot de passe (optionnelle)
+- Lien valable 1 à 7 jours, puis refusé
 - Espace personnel (historique, suppression)
 - Authentification JWT
