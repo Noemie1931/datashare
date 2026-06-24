@@ -10,6 +10,7 @@ import { FileEntity } from './file.entity';
     TypeOrmModule.forFeature([FileEntity]),
     MulterModule.register({
       dest: './uploads',
+      limits: { fileSize: 1024 * 1024 * 1024 }, // 1 Go max
     }),
   ],
   providers: [FilesService],
