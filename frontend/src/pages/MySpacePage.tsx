@@ -248,7 +248,7 @@ function switchSegment(active: boolean): React.CSSProperties {
   return {
     padding: '6px 20px',
     background: active ? '#E8836B' : 'transparent',
-    color: active ? 'white' : '#888',
+    color: '#111',
     border: 'none',
     borderRadius: '999px',
     cursor: 'pointer',
