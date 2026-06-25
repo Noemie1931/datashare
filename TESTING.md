@@ -34,22 +34,29 @@ dépendre de la base.
 - Suppression d'un fichier inexistant : `NotFoundException`
 - Refus d'un fichier exécutable même renommé (vérification du magic number)
 
-Au total **24 tests**, tous au vert (3 suites).
+**Contrôleur de fichiers (`files.controller`)** — la logique de la route publique de téléchargement
+- Lien expiré : `ForbiddenException` (403)
+- Mauvais mot de passe de fichier : `ForbiddenException` (403)
+- Téléchargement réussi (avec et sans mot de passe)
+- Upload (renvoie le lien), liste et suppression des fichiers
+
+Au total **39 tests**, tous au vert (4 suites).
 
 ## Couverture
 
 ```
 File                | % Stmts | % Lines |
 --------------------|---------|---------|
-All files           |   83.2  |   86.5  |
+All files           |   89.2  |   91.0  |
   auth.service.ts   |  100.0  |  100.0  |
   users.service.ts  |  100.0  |  100.0  |
   files.service.ts  |  100.0  |  100.0  |
+  jwt-auth.guard.ts |  100.0  |  100.0  |
 ```
 
-Les trois services métier sont à 100%. La moyenne globale (83%) est tirée vers le bas
-par les fichiers de configuration (modules, `main.ts`, guard et stratégie JWT) qui ne
-contiennent pas de logique à tester. L'objectif de 70% est largement dépassé.
+Les trois services métier sont à 100%. La moyenne globale (89%) est tirée vers le bas
+par les fichiers de configuration (modules, `main.ts`, stratégie JWT, contrôleurs) qui ne
+contiennent pas de logique métier à mesurer. L'objectif de 70% est largement dépassé.
 
 ## Tests end-to-end (Cypress)
 

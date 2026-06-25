@@ -117,11 +117,66 @@ describe('FilesService', () => {
       size: 6,
     } as Express.Multer.File;
 
+    // on verifie le type d'erreur ET le message renvoye a l'utilisateur
     await expect(service.upload(mockMulterFile, 'user-123'))
       .rejects.toThrow(BadRequestException);
+    await expect(service.upload(mockMulterFile, 'user-123'))
+      .rejects.toThrow('Type de fichier non autorisé : exécutable détecté.');
     // le fichier dangereux doit avoir été supprimé du disque
     expect(fs.unlinkSync).toHaveBeenCalledWith(tmpPath);
     jest.requireActual('fs').unlinkSync(tmpPath);
+  });
+
+  it('should reject a shell script disguised as a text file (#! magic number)', async () => {
+    const tmpPath = path.join(os.tmpdir(), `ds_script_${Date.now()}.txt`);
+    // En-tete "#!" = script shell, malgre l'extension .txt
+    fs.writeFileSync(tmpPath, '#!/bin/sh\nrm -rf /\n');
+    const mockMulterFile = {
+      originalname: 'notes.txt',
+      path: tmpPath,
+      mimetype: 'text/plain',
+      size: 18,
+    } as Express.Multer.File;
+
+    await expect(service.upload(mockMulterFile, 'user-123'))
+      .rejects.toThrow('Type de fichier non autorisé : exécutable détecté.');
+    expect(fs.unlinkSync).toHaveBeenCalledWith(tmpPath);
+    jest.requireActual('fs').unlinkSync(tmpPath);
+  });
+
+  // Meme logique de detection (comparaison du magic number) pour les
+  // executables Linux (ELF) et macOS (Mach-O), pas seulement Windows.
+  it.each([
+    ['ELF (Linux)', [0x7f, 0x45, 0x4c, 0x46]],
+    ['Mach-O (macOS)', [0xfe, 0xed, 0xfa, 0xce]],
+  ])('should reject a %s executable (magic number)', async (_label, magic) => {
+    const tmpPath = path.join(os.tmpdir(), `ds_bin_${_label}_${Date.now()}.txt`);
+    fs.writeFileSync(tmpPath, Buffer.from([...magic, 0x00, 0x00]));
+    const mockMulterFile = {
+      originalname: 'innocent.txt',
+      path: tmpPath,
+      mimetype: 'text/plain',
+      size: 6,
+    } as Express.Multer.File;
+
+    await expect(service.upload(mockMulterFile, 'user-123'))
+      .rejects.toThrow('Type de fichier non autorisé : exécutable détecté.');
+    expect(fs.unlinkSync).toHaveBeenCalledWith(tmpPath);
+    jest.requireActual('fs').unlinkSync(tmpPath);
+  });
+
+  it('should reject a file larger than the size limit (DoS protection)', async () => {
+    const mockMulterFile = {
+      originalname: 'enorme.zip',
+      path: '/uploads/enorme.zip',
+      mimetype: 'application/zip',
+      size: 1024 * 1024 * 1024 + 1, // 1 octet de trop (> 1 Go)
+    } as Express.Multer.File;
+
+    await expect(service.upload(mockMulterFile, 'user-123'))
+      .rejects.toThrow('Fichier trop volumineux : maximum 1 Go.');
+    // le fichier deja ecrit sur le disque par Multer doit etre supprime
+    expect(fs.unlinkSync).toHaveBeenCalledWith('/uploads/enorme.zip');
   });
 
   it('should throw BadRequestException if file password is too short', async () => {
@@ -133,7 +188,7 @@ describe('FilesService', () => {
     } as Express.Multer.File;
 
     await expect(service.upload(mockMulterFile, 'user-123', '123'))
-      .rejects.toThrow(BadRequestException);
+      .rejects.toThrow('Mot de passe : minimum 6 caractères.');
   });
 
   it('should delete a file without physical file', async () => {
@@ -151,5 +206,19 @@ describe('FilesService', () => {
   it('should throw NotFoundException when deleting non-existent file', async () => {
     mockRepo.findOne.mockResolvedValueOnce(null);
     await expect(service.delete('999', 'user-123')).rejects.toThrow(NotFoundException);
+  });
+
+  it("should not let a user delete another user's file", async () => {
+    // delete() filtre par { id, userId } : un fichier appartenant a un autre
+    // utilisateur n'est jamais trouve, donc la requete repond NotFound et
+    // aucune suppression (disque + base) n'est effectuee.
+    mockRepo.findOne.mockResolvedValueOnce(null);
+    await expect(service.delete('file-de-user-123', 'attaquant'))
+      .rejects.toThrow(NotFoundException);
+    expect(mockRepo.findOne).toHaveBeenCalledWith({
+      where: { id: 'file-de-user-123', userId: 'attaquant' },
+    });
+    expect(mockRepo.remove).not.toHaveBeenCalled();
+    expect(fs.unlinkSync).not.toHaveBeenCalled();
   });
 });

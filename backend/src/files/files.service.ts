@@ -6,6 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
 
+// Taille maximale autorisee pour un fichier (1 Go). Limiter la taille
+// protege le serveur d'un deni de service par saturation du disque.
+const MAX_FILE_SIZE_BYTES = 1024 * 1024 * 1024;
+
 @Injectable()
 export class FilesService {
   constructor(
@@ -19,6 +23,14 @@ export class FilesService {
     password?: string,
     expiresInDays?: number,
   ): Promise<FileEntity> {
+    // Securite : on refuse les fichiers trop volumineux. C'est une seconde
+    // barriere, en plus de la limite de Multer, au cas ou un fichier passerait
+    // (et pour pouvoir renvoyer un message clair au client).
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      fs.unlinkSync(file.path);
+      throw new BadRequestException('Fichier trop volumineux : maximum 1 Go.');
+    }
+
     if (password && password.length < 6) {
       throw new BadRequestException('Mot de passe : minimum 6 caractères.');
     }

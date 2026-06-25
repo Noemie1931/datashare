@@ -8,7 +8,7 @@
 | Mots de passe | hashés avec bcrypt (10 rounds), jamais stockés en clair |
 | Liens de téléchargement | token UUID v4, impossible à deviner |
 | Mot de passe sur un fichier | optionnel, également hashé bcrypt |
-| Upload | taille limitée à 1 Go (limite Multer) |
+| Upload | taille limitée à 1 Go (limite Multer + contrôle côté serveur) |
 | Type de fichier | inspection du **contenu réel** (magic number), pas de l'extension : les exécutables (MZ/ELF/Mach-O, scripts `#!`) sont refusés même renommés en `.txt` |
 | Expiration | passé 1 à 7 jours (selon le choix), le lien est refusé au téléchargement |
 | CORS | restreint à `http://localhost:5173` en dev |

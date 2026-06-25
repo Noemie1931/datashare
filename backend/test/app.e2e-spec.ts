@@ -52,6 +52,26 @@ describe('AppController (e2e)', () => {
     });
   });
 
+  // L'upload est protege par le JwtAuthGuard. Sans token JWT valide, la
+  // requete doit etre refusee AVANT meme d'atteindre le service : c'est le
+  // garde qui repond 401. On le verifie par une vraie requete HTTP, car un
+  // test unitaire de controleur (qui mocke le service) court-circuite le
+  // garde et ne peut donc pas prouver ce comportement.
+  describe('Fichiers (/files)', () => {
+    it('POST /files/upload sans token est refuse (401)', async () => {
+      await request(app.getHttpServer())
+        .post('/files/upload')
+        .expect(401);
+    });
+
+    it('POST /files/upload avec un token invalide est refuse (401)', async () => {
+      await request(app.getHttpServer())
+        .post('/files/upload')
+        .set('Authorization', 'Bearer token_bidon')
+        .expect(401);
+    });
+  });
+
   afterEach(async () => {
     await app.close();
   });
