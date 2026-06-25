@@ -51,6 +51,12 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
+    it('should throw UnauthorizedException if credentials are empty', async () => {
+      await expect(authService.login('', ''))
+        .rejects.toThrow(UnauthorizedException);
+      expect(mockUsersService.findByEmail).not.toHaveBeenCalled();
+    });
+
     it('should throw UnauthorizedException if user not found', async () => {
       mockUsersService.findByEmail.mockResolvedValue(null);
       await expect(authService.login('wrong@test.com', 'password'))

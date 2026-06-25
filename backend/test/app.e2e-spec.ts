@@ -16,11 +16,40 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  // Test d'intégration du parcours d'authentification : on lance toute
+  // l'application (contrôleur + service + base) et on envoie de vraies
+  // requêtes HTTP, comme le ferait le frontend.
+  describe('Authentification (/auth)', () => {
+    // Email unique à chaque exécution pour ne pas heurter la contrainte
+    // d'unicité en base si le test est relancé plusieurs fois.
+    const email = `e2e_${Date.now()}@test.com`;
+    const password = 'password123';
+
+    it('POST /auth/register crée un compte et renvoie un token', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({ email, password })
+        .expect(201);
+
+      expect(res.body).toHaveProperty('access_token');
+      expect(res.body.user.email).toBe(email);
+    });
+
+    it('POST /auth/login connecte ce compte et renvoie un token', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email, password })
+        .expect(201);
+
+      expect(res.body).toHaveProperty('access_token');
+    });
+
+    it('POST /auth/login refuse un mauvais mot de passe (401)', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email, password: 'mauvais_mot_de_passe' })
+        .expect(401);
+    });
   });
 
   afterEach(async () => {

@@ -17,6 +17,7 @@ dépendre de la base.
 - Connexion réussie : renvoie un token
 - Mauvais mot de passe : `UnauthorizedException`
 - Utilisateur inexistant : `UnauthorizedException`
+- Identifiants vides : `UnauthorizedException`
 
 **Utilisateurs (`users.service`)**
 - Création d'un utilisateur
@@ -32,7 +33,7 @@ dépendre de la base.
 - Suppression (avec et sans fichier physique sur le disque)
 - Suppression d'un fichier inexistant : `NotFoundException`
 
-Au total **22 tests**, tous au vert (3 suites).
+Au total **23 tests**, tous au vert (3 suites).
 
 ## Couverture
 
