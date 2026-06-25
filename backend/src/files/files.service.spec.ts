@@ -4,6 +4,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { FileEntity } from './file.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('fs', () => ({
@@ -90,15 +92,36 @@ describe('FilesService', () => {
   });
 
   it('should upload a file', async () => {
+    const tmpPath = path.join(os.tmpdir(), `ds_test_${Date.now()}.txt`);
+    fs.writeFileSync(tmpPath, 'contenu texte normal');
     const mockMulterFile = {
       originalname: 'test.txt',
-      path: '/uploads/test.txt',
+      path: tmpPath,
       mimetype: 'text/plain',
       size: 100,
     } as Express.Multer.File;
 
     const result = await service.upload(mockMulterFile, 'user-123');
     expect(result.originalName).toBe('test.txt');
+    jest.requireActual('fs').unlinkSync(tmpPath);
+  });
+
+  it('should reject an executable file even if renamed (magic number)', async () => {
+    const tmpPath = path.join(os.tmpdir(), `ds_evil_${Date.now()}.txt`);
+    // En-tête "MZ" = exécutable Windows, malgré l'extension .txt
+    fs.writeFileSync(tmpPath, Buffer.from([0x4d, 0x5a, 0x90, 0x00, 0x41, 0x42]));
+    const mockMulterFile = {
+      originalname: 'innocent.txt',
+      path: tmpPath,
+      mimetype: 'text/plain',
+      size: 6,
+    } as Express.Multer.File;
+
+    await expect(service.upload(mockMulterFile, 'user-123'))
+      .rejects.toThrow(BadRequestException);
+    // le fichier dangereux doit avoir été supprimé du disque
+    expect(fs.unlinkSync).toHaveBeenCalledWith(tmpPath);
+    jest.requireActual('fs').unlinkSync(tmpPath);
   });
 
   it('should throw BadRequestException if file password is too short', async () => {

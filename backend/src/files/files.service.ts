@@ -22,6 +22,15 @@ export class FilesService {
     if (password && password.length < 6) {
       throw new BadRequestException('Mot de passe : minimum 6 caractères.');
     }
+
+    // Sécurité : on inspecte le CONTENU réel du fichier (ses premiers octets,
+    // le « magic number »), pas son extension ni son Content-Type qui sont
+    // tous deux falsifiables. Un exécutable renommé en .txt est donc détecté.
+    if (this.isExecutable(file.path)) {
+      fs.unlinkSync(file.path);
+      throw new BadRequestException('Type de fichier non autorisé : exécutable détecté.');
+    }
+
     const days = Number(expiresInDays) || 7;
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + days);
@@ -79,5 +88,26 @@ export class FilesService {
     const file = await this.findByToken(token);
     if (!file.passwordHash) return true;
     return bcrypt.compare(password, file.passwordHash);
+  }
+
+  // Lit les premiers octets du fichier et les compare aux signatures connues
+  // des exécutables. Renvoie true si le fichier est un exécutable, quelle que
+  // soit son extension.
+  private isExecutable(filePath: string): boolean {
+    const fd = fs.openSync(filePath, 'r');
+    const header = Buffer.alloc(4);
+    fs.readSync(fd, header, 0, 4, 0);
+    fs.closeSync(fd);
+
+    const signatures = [
+      [0x4d, 0x5a],             // "MZ"      → exécutable Windows (.exe, .dll)
+      [0x7f, 0x45, 0x4c, 0x46], // "\x7FELF" → exécutable Linux
+      [0xfe, 0xed, 0xfa, 0xce], // Mach-O    → exécutable macOS
+      [0xfe, 0xed, 0xfa, 0xcf],
+      [0xcf, 0xfa, 0xed, 0xfe],
+      [0xca, 0xfe, 0xba, 0xbe], // Mach-O universel
+      [0x23, 0x21],             // "#!"      → script shell
+    ];
+    return signatures.some((sig) => sig.every((byte, i) => header[i] === byte));
   }
 }
