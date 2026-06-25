@@ -100,13 +100,13 @@ export class FilesService {
     fs.closeSync(fd);
 
     const signatures = [
-      [0x4d, 0x5a],             // "MZ"      → exécutable Windows (.exe, .dll)
-      [0x7f, 0x45, 0x4c, 0x46], // "\x7FELF" → exécutable Linux
-      [0xfe, 0xed, 0xfa, 0xce], // Mach-O    → exécutable macOS
+      [0x4d, 0x5a],             // "MZ"      -> exécutable Windows (.exe, .dll)
+      [0x7f, 0x45, 0x4c, 0x46], // "\x7FELF" -> exécutable Linux
+      [0xfe, 0xed, 0xfa, 0xce], // Mach-O    -> exécutable macOS
       [0xfe, 0xed, 0xfa, 0xcf],
       [0xcf, 0xfa, 0xed, 0xfe],
       [0xca, 0xfe, 0xba, 0xbe], // Mach-O universel
-      [0x23, 0x21],             // "#!"      → script shell
+      [0x23, 0x21],             // "#!"      -> script shell
     ];
     return signatures.some((sig) => sig.every((byte, i) => header[i] === byte));
   }
