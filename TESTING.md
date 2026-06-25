@@ -32,8 +32,9 @@ dépendre de la base.
 - Vérification du mot de passe (avec et sans mot de passe)
 - Suppression (avec et sans fichier physique sur le disque)
 - Suppression d'un fichier inexistant : `NotFoundException`
+- Refus d'un fichier exécutable même renommé (vérification du magic number)
 
-Au total **23 tests**, tous au vert (3 suites).
+Au total **24 tests**, tous au vert (3 suites).
 
 ## Couverture
 
