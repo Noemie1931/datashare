@@ -35,6 +35,25 @@ Sortie de `npm run build` :
 Build en ~130 ms. Le bundle JS gzippé tient sous 100 Ko, ce qui est largement correct
 pour une SPA (React + React Router + Axios). Vite se charge du tree-shaking automatiquement.
 
+## Journalisation (logs structurés)
+
+Un intercepteur NestJS journalise chaque requête HTTP au format **JSON structuré**, avec
+les métriques clés par appel :
+
+```
+[HTTP] {"method":"POST","url":"/auth/register","statusCode":201,"durationMs":92}
+```
+
+Chaque ligne contient la **méthode**, la **route**, le **code de statut** et le **temps de
+réponse** (`durationMs`). Ce format est directement exploitable par un agrégateur de logs
+(ex. ELK, Grafana Loki) pour suivre la latence par endpoint et repérer les requêtes lentes
+ou en erreur.
+
+**Analyse :** les routes de lecture (`GET /files`, `GET /d/:token`) répondent en quelques
+millisecondes ; la route la plus coûteuse reste `POST /auth/login` (~100 ms, à cause de
+bcrypt), ce que confirme le test de charge k6 ci-dessus. Aucune requête observée ne dépasse
+le budget de 500 ms.
+
 ## Pistes si le projet grossit
 
 - Activer la compression gzip côté NestJS en prod
