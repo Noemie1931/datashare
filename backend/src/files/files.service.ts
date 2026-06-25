@@ -43,7 +43,16 @@ export class FilesService {
       throw new BadRequestException('Type de fichier non autorisé : exécutable détecté.');
     }
 
-    const days = Number(expiresInDays) || 7;
+    // Durée d'expiration : optionnelle (7 jours par défaut), mais bornée
+    // entre 1 et 7 jours et validée ici, côté serveur (spec US01 / US10).
+    let days = 7;
+    if (expiresInDays !== undefined && expiresInDays !== null && `${expiresInDays}` !== '') {
+      days = Number(expiresInDays);
+      if (!Number.isInteger(days) || days < 1 || days > 7) {
+        fs.unlinkSync(file.path);
+        throw new BadRequestException("Durée d'expiration : entre 1 et 7 jours.");
+      }
+    }
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + days);
 

@@ -221,4 +221,20 @@ describe('FilesService', () => {
     expect(mockRepo.remove).not.toHaveBeenCalled();
     expect(fs.unlinkSync).not.toHaveBeenCalled();
   });
+
+  it("should reject an expiration duration over 7 days (server-side validation)", async () => {
+    // Spec US01 / US10 : la duree est au maximum 7 jours, validee cote serveur.
+    const tmpPath = path.join(os.tmpdir(), `ds_exp_${Date.now()}.txt`);
+    fs.writeFileSync(tmpPath, 'contenu normal');
+    const mockMulterFile = {
+      originalname: 'a.txt',
+      path: tmpPath,
+      mimetype: 'text/plain',
+      size: 50,
+    } as Express.Multer.File;
+
+    await expect(service.upload(mockMulterFile, 'user-123', undefined, 30))
+      .rejects.toThrow("Durée d'expiration : entre 1 et 7 jours.");
+    jest.requireActual('fs').unlinkSync(tmpPath);
+  });
 });
