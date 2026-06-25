@@ -20,7 +20,7 @@
 Lancé dans `backend/` :
 
 ```
-24 vulnerabilities (18 moderate, 6 high)
+25 vulnerabilities (18 moderate, 7 high)
 ```
 
 Elles concernent toutes des dépendances de NestJS (`@nestjs/core`,
@@ -35,5 +35,6 @@ correctif est disponible.
 - Restreindre le CORS au vrai domaine de production
 - Passer le tout en HTTPS
 - Monter les versions de NestJS pour corriger les vulnérabilités
-- Ajouter un cron qui supprime les fichiers expirés du disque : pour l'instant le lien
-  est bloqué après expiration, mais le fichier reste stocké sur le serveur
+
+> Note : la purge des fichiers expirés (suppression disque + base) est **déjà en place**
+> via un cron quotidien (`@nestjs/schedule`), en plus du blocage du lien à l'expiration.
