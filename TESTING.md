@@ -33,6 +33,8 @@ dépendre de la base.
 - Suppression (avec et sans fichier physique sur le disque)
 - Suppression d'un fichier inexistant : `NotFoundException`
 - Refus d'un fichier exécutable même renommé (vérification du magic number)
+- Refus d'un fichier trop volumineux (> 1 Go) et d'une durée d'expiration hors de 1-7 jours
+- Purge des fichiers expirés (suppression disque + base)
 
 **Contrôleur de fichiers (`files.controller`)** — la logique de la route publique de téléchargement
 - Lien expiré : `ForbiddenException` (403)
@@ -40,7 +42,7 @@ dépendre de la base.
 - Téléchargement réussi (avec et sans mot de passe)
 - Upload (renvoie le lien), liste et suppression des fichiers
 
-Au total **39 tests**, tous au vert (4 suites).
+Au total **41 tests**, tous au vert (4 suites).
 
 ## Couverture
 
