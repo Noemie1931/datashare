@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, LessThanOrEqual } from 'typeorm';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { FileEntity } from './file.entity';
 import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
@@ -109,6 +110,29 @@ export class FilesService {
     const file = await this.findByToken(token);
     if (!file.passwordHash) return true;
     return bcrypt.compare(password, file.passwordHash);
+  }
+
+  // Supprime tous les fichiers expirés, du disque ET de la base. Renvoie le
+  // nombre de fichiers purgés. (Spec US01/US10 : suppression à expiration.)
+  async purgeExpired(): Promise<number> {
+    const expired = await this.repo.find({
+      where: { expiresAt: LessThanOrEqual(new Date()) },
+    });
+    for (const file of expired) {
+      if (fs.existsSync(file.storagePath)) {
+        fs.unlinkSync(file.storagePath);
+      }
+    }
+    if (expired.length > 0) {
+      await this.repo.remove(expired);
+    }
+    return expired.length;
+  }
+
+  // Tâche planifiée : purge automatique des fichiers expirés, chaque jour.
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async handleExpiredCleanup(): Promise<void> {
+    await this.purgeExpired();
   }
 
   // Lit les premiers octets du fichier et les compare aux signatures connues

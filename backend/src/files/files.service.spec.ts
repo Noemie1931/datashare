@@ -33,6 +33,7 @@ describe('FilesService', () => {
     create: jest.fn().mockReturnValue(mockFile),
     save: jest.fn().mockResolvedValue(mockFile),
     findOne: jest.fn().mockResolvedValue(mockFile),
+    find: jest.fn().mockResolvedValue([]),
     remove: jest.fn().mockResolvedValue(undefined),
     createQueryBuilder: jest.fn().mockReturnValue({
       where: jest.fn().mockReturnThis(),
@@ -236,5 +237,21 @@ describe('FilesService', () => {
     await expect(service.upload(mockMulterFile, 'user-123', undefined, 30))
       .rejects.toThrow("Durée d'expiration : entre 1 et 7 jours.");
     jest.requireActual('fs').unlinkSync(tmpPath);
+  });
+
+  it('purgeExpired supprime les fichiers expirés du disque et de la base', async () => {
+    const expired = [
+      { ...mockFile, id: 'e1', storagePath: '/uploads/old1' },
+      { ...mockFile, id: 'e2', storagePath: '/uploads/old2' },
+    ];
+    mockRepo.find.mockResolvedValueOnce(expired);
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+
+    const count = await service.purgeExpired();
+
+    expect(count).toBe(2);
+    expect(fs.unlinkSync).toHaveBeenCalledWith('/uploads/old1');
+    expect(fs.unlinkSync).toHaveBeenCalledWith('/uploads/old2');
+    expect(mockRepo.remove).toHaveBeenCalledWith(expired);
   });
 });
