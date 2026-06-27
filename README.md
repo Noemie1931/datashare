@@ -74,6 +74,12 @@ npx cypress run     # tests end-to-end navigateur
 k6 run k6_test.js   # test de performance (depuis la racine)
 ```
 
+## Contrat d'interface (API)
+
+Le contrat d'interface complet est décrit au format **OpenAPI 3.0.3** dans [`openapi.yaml`](openapi.yaml) : routes, paramètres, structures de données et codes de retour pour la communication front ↔ back.
+
+Pour le visualiser : coller le contenu dans [editor.swagger.io](https://editor.swagger.io), ou utiliser une extension OpenAPI/Swagger de l'éditeur.
+
 ## Fonctionnalités
 
 - Upload de fichiers (max 1 Go)
