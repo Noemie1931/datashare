@@ -87,6 +87,10 @@ Détail dans `PERF.md`.
 
 ## 6. Couverture
 
+![Rapport de couverture Jest/Istanbul — 99,34 % statements](docs/coverage_report.png)
+
+*Capture réelle du rapport généré par `npm run test:cov`.*
+
 ```
 File                     | % Stmts | % Lines |
 -------------------------|---------|---------|
