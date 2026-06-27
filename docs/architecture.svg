@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 480" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="920" height="480" fill="#ffffff"/>
+  <text x="460" y="28" text-anchor="middle" font-size="18" font-weight="bold" fill="#1A1A1A">DataShare — Architecture de la solution</text>
+
+  <!-- Navigateur -->
+  <rect x="20" y="195" width="120" height="90" rx="8" fill="#F2F2F2" stroke="#888" stroke-width="1.5"/>
+  <text x="80" y="232" text-anchor="middle" font-size="13" font-weight="bold" fill="#1A1A1A">Navigateur</text>
+  <text x="80" y="250" text-anchor="middle" font-size="11" fill="#444">(utilisateur)</text>
+
+  <!-- Docker boundary -->
+  <rect x="170" y="48" width="730" height="412" rx="12" fill="none" stroke="#2496ED" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text x="184" y="68" font-size="12" font-weight="bold" fill="#2496ED">Docker Compose — 3 conteneurs</text>
+
+  <!-- Frontend -->
+  <rect x="196" y="175" width="180" height="150" rx="8" fill="#EAF2FB" stroke="#2E6DA4" stroke-width="1.8"/>
+  <text x="286" y="200" text-anchor="middle" font-size="14" font-weight="bold" fill="#2E6DA4">Frontend</text>
+  <text x="286" y="222" text-anchor="middle" font-size="12" fill="#1A1A1A">React + Vite</text>
+  <text x="286" y="240" text-anchor="middle" font-size="12" fill="#1A1A1A">TypeScript</text>
+  <text x="286" y="258" text-anchor="middle" font-size="12" fill="#1A1A1A">Axios + intercepteur JWT</text>
+  <text x="286" y="282" text-anchor="middle" font-size="11" fill="#444">nginx · port 5173</text>
+
+  <!-- Backend -->
+  <rect x="430" y="120" width="205" height="245" rx="8" fill="#EAF2FB" stroke="#2E6DA4" stroke-width="1.8"/>
+  <text x="532" y="145" text-anchor="middle" font-size="14" font-weight="bold" fill="#2E6DA4">Backend — NestJS</text>
+  <text x="532" y="170" text-anchor="middle" font-size="12" fill="#1A1A1A">Modules : Auth · Users · Files</text>
+  <text x="532" y="192" text-anchor="middle" font-size="12" fill="#1A1A1A">Guard JWT (routes protégées)</text>
+  <text x="532" y="214" text-anchor="middle" font-size="12" fill="#1A1A1A">Controller → Service</text>
+  <text x="532" y="236" text-anchor="middle" font-size="12" fill="#1A1A1A">TypeORM (repository)</text>
+  <text x="532" y="258" text-anchor="middle" font-size="12" fill="#1A1A1A">Intercepteur de logs</text>
+  <text x="532" y="282" text-anchor="middle" font-size="11" fill="#444">Node · port 3000 · /health</text>
+
+  <!-- PostgreSQL cylinder -->
+  <g>
+    <ellipse cx="775" cy="150" rx="75" ry="16" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.8"/>
+    <path d="M700 150 V250 a75 16 0 0 0 150 0 V150" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.8"/>
+    <ellipse cx="775" cy="150" rx="75" ry="16" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.8"/>
+    <text x="775" y="195" text-anchor="middle" font-size="13" font-weight="bold" fill="#2E7D32">PostgreSQL</text>
+    <text x="775" y="214" text-anchor="middle" font-size="11" fill="#444">métadonnées</text>
+    <text x="775" y="232" text-anchor="middle" font-size="11" fill="#444">port 5433 → 5432</text>
+  </g>
+
+  <!-- Uploads storage -->
+  <g>
+    <ellipse cx="532" cy="392" rx="70" ry="13" fill="#FFF7E6" stroke="#B8860B" stroke-width="1.6"/>
+    <path d="M462 392 V430 a70 13 0 0 0 140 0 V392" fill="#FFF7E6" stroke="#B8860B" stroke-width="1.6"/>
+    <ellipse cx="532" cy="392" rx="70" ry="13" fill="#FFF7E6" stroke="#B8860B" stroke-width="1.6"/>
+    <text x="532" y="420" text-anchor="middle" font-size="12" font-weight="bold" fill="#B8860B">/uploads (volume)</text>
+  </g>
+
+  <!-- Arrows -->
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#444"/></marker>
+  </defs>
+
+  <!-- browser <-> frontend -->
+  <line x1="140" y1="232" x2="194" y2="232" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="194" y1="250" x2="142" y2="250" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <text x="167" y="224" text-anchor="middle" font-size="10" fill="#444">HTML</text>
+
+  <!-- frontend -> backend -->
+  <line x1="376" y1="232" x2="428" y2="232" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="428" y1="252" x2="378" y2="252" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <text x="402" y="206" text-anchor="middle" font-size="10" fill="#2E6DA4">API REST</text>
+  <text x="402" y="219" text-anchor="middle" font-size="10" fill="#2E6DA4">HTTP / JSON</text>
+  <text x="402" y="270" text-anchor="middle" font-size="9.5" fill="#444">Bearer JWT</text>
+
+  <!-- backend -> postgres -->
+  <line x1="635" y1="205" x2="699" y2="205" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <text x="667" y="197" text-anchor="middle" font-size="10" fill="#2E7D32">TypeORM / SQL</text>
+
+  <!-- backend -> uploads -->
+  <line x1="532" y1="365" x2="532" y2="378" stroke="#444" stroke-width="1.6" marker-end="url(#a)"/>
+  <text x="600" y="362" text-anchor="middle" font-size="10" fill="#B8860B">fs (stream)</text>
+</svg>
