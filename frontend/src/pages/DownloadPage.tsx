@@ -53,7 +53,15 @@ export default function DownloadPage() {
   useEffect(() => {
     api.get(`/d/${token}`)
       .then(res => setFileInfo(res.data))
-      .catch(() => setError('Ce fichier n\'est plus disponible en téléchargement car il a expiré.'))
+      .catch((e: any) => {
+        if (e.response?.status === 404) {
+          setError('Ce lien est invalide : aucun fichier ne correspond.');
+        } else if (e.response?.status === 403) {
+          setError('Ce fichier n\'est plus disponible car le lien a expiré.');
+        } else {
+          setError('Ce fichier n\'est plus disponible.');
+        }
+      })
       .finally(() => setLoading(false));
   }, [token]);
 
