@@ -11,5 +11,42 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  backend:
+    build: ./backend
+    container_name: datashare_back
+    # Les variables (dont JWT_SECRET) viennent du .env, jamais codees en dur.
+    env_file: ./backend/.env
+    # On surcharge la connexion BDD : dans le reseau Docker, on joint le
+    # service "postgres" sur son port interne 5432 (pas le 5433 expose a l'hote).
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/app/uploads
+    # Health check : Docker interroge GET /health pour savoir si l'API est prete.
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 20s
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./frontend
+    container_name: datashare_front
+    # nginx ecoute sur 80 dans le conteneur, expose sur 5173 cote hote
+    # (l'origine attendue par le CORS du backend).
+    ports:
+      - "5173:80"
+    # Le front ne demarre qu'une fois le back declare "sain" par le health check.
+    depends_on:
+      backend:
+        condition: service_healthy
+
 volumes:
   pgdata:
+  uploads:

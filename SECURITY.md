@@ -29,12 +29,18 @@ Elles concernent toutes des dépendances de NestJS (`@nestjs/core`,
 il suffirait de suivre les mises à jour de NestJS et de monter de version dès qu'un
 correctif est disponible.
 
-## Avant une mise en production
+## Durci suite au retour du mentor
 
-- Sortir le `JWT_SECRET` du code et le passer en variable d'environnement
+- **`JWT_SECRET` sorti du code** : lu depuis le `.env` via `ConfigService` (signature dans `auth.module.ts`, vérification dans `jwt.strategy.ts`). Plus aucun secret en dur, et le `.env` est dans le `.gitignore`.
+- **Conteneurisation complète** : front + back + base via `docker-compose` ; endpoint `/health` pour le health check Docker.
+- **Couverture des fichiers de sécurité** : `jwt.strategy.ts` et `jwt-auth.guard.ts` sont désormais testés (étaient à 0 %) → couverture globale ~99 %.
+
+## Avant une mise en production (reste à faire)
+
 - Restreindre le CORS au vrai domaine de production
 - Passer le tout en HTTPS
-- Monter les versions de NestJS pour corriger les vulnérabilités
+- Monter les versions de NestJS pour corriger les vulnérabilités `npm audit`
+- Ajouter la révocation de token (refresh token / liste de révocation)
 
 > Note : la purge des fichiers expirés (suppression disque + base) est **déjà en place**
 > via un cron quotidien (`@nestjs/schedule`), en plus du blocage du lien à l'expiration.

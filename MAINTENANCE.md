@@ -26,9 +26,9 @@ npm audit fix
 
 | Risque | Impact | Mitigation |
 |---|---|---|
-| JWT_SECRET exposé | Critique | Variables d'environnement en production |
+| JWT_SECRET exposé | Critique | **Fait** : lu depuis `.env` via ConfigService (hors Git) ; clé longue et aléatoire en prod |
 | Dépendances obsolètes | Moyen | Audit mensuel |
-| Espace disque fichiers | Moyen | À prévoir : cron de nettoyage des fichiers expirés (pas encore en place) |
+| Espace disque fichiers | Moyen | **Fait** : cron quotidien de purge des fichiers expirés (`@nestjs/schedule`) |
 | Base de données corrompue | Élevé | Sauvegardes régulières |
 
 ## Procédures

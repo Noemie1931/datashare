@@ -16,6 +16,15 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
+  // Health check : route publique utilisee par Docker pour savoir si l'API
+  // est prete. Prouve aussi que AppController est bien cable dans AppModule.
+  describe('Health (/health)', () => {
+    it('GET /health renvoie 200 et le statut du service', async () => {
+      const res = await request(app.getHttpServer()).get('/health').expect(200);
+      expect(res.body).toEqual({ status: 'ok', service: 'datashare-api' });
+    });
+  });
+
   // Test d'intégration du parcours d'authentification : on lance toute
   // l'application (contrôleur + service + base) et on envoie de vraies
   // requêtes HTTP, comme le ferait le frontend.
@@ -69,6 +78,28 @@ describe('AppController (e2e)', () => {
         .post('/files/upload')
         .set('Authorization', 'Bearer token_bidon')
         .expect(401);
+    });
+
+    // Chemin authentifie REUSSI : on cree un compte, on recupere son vrai
+    // token, puis on accede a une route protegee avec ce token. Ce test
+    // exerce de bout en bout le JwtAuthGuard (il laisse passer) ET la
+    // JwtStrategy (sa methode validate remonte l'utilisateur) — les deux
+    // fichiers qui etaient a 0% de couverture.
+    it('GET /files avec un token valide est accepte (200)', async () => {
+      const creds = { email: `e2e_files_${Date.now()}@test.com`, password: 'password123' };
+      const register = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(creds)
+        .expect(201);
+
+      const token = register.body.access_token;
+
+      const res = await request(app.getHttpServer())
+        .get('/files')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
     });
   });
 

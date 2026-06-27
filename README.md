@@ -7,7 +7,8 @@ Application de partage de fichiers via liens temporaires.
 - **Backend** : NestJS (TypeScript)
 - **Frontend** : React + Vite (TypeScript)
 - **Base de données** : PostgreSQL (Docker)
-- **Auth** : JWT
+- **Auth** : JWT (secret en variable d'environnement)
+- **Conteneurisation** : Docker Compose (PostgreSQL + backend + frontend)
 
 ## Prérequis
 
@@ -23,20 +24,29 @@ git clone https://github.com/Noemie1931/datashare.git
 cd datashare
 ```
 
-### 2. Lancer PostgreSQL
+### Option A — Tout avec Docker (recommandé)
 ```bash
-docker-compose up -d
+cp backend/.env.example backend/.env
+docker-compose up -d --build   # PostgreSQL + backend (:3000) + frontend (:5173)
+```
+Le backend expose `GET /health` ; Docker attend qu'il soit « sain » avant de lancer le frontend.
+
+### Option B — Développement local
+
+#### 2. Lancer PostgreSQL seul
+```bash
+docker-compose up -d postgres
 ```
 
-### 3. Backend
+#### 3. Backend
 ```bash
 cd backend
-cp .env.example .env
+cp .env.example .env       # contient JWT_SECRET (lu via ConfigService)
 npm install
 npm run start:dev
 ```
 
-### 4. Frontend
+#### 4. Frontend
 ```bash
 cd frontend
 npm install
@@ -50,10 +60,18 @@ npm run dev
 
 ## Tests
 
+57 tests (47 unitaires + 7 intégration + 3 e2e), couverture ~99 %. Détail dans `TESTING.md`.
+
 ```bash
 cd backend
-npm run test        # tests unitaires
+npm run test        # tests unitaires (Jest)
+npm run test:e2e    # tests d'intégration (Supertest, base requise)
 npm run test:cov    # couverture de code
+
+cd ../frontend
+npx cypress run     # tests end-to-end navigateur
+
+k6 run k6_test.js   # test de performance (depuis la racine)
 ```
 
 ## Fonctionnalités
