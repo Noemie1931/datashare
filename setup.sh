@@ -1,9 +1,9 @@
 #!/bin/bash
 echo "Installation DataShare..."
 
-# 1. Lancer PostgreSQL
+# 1. Lancer PostgreSQL (uniquement la base ; le conteneur cree la base 'datashare')
 echo "Demarrage PostgreSQL..."
-docker-compose up -d
+docker-compose up -d postgres
 sleep 3
 
 # 2. Backend
