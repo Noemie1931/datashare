@@ -1,6 +1,6 @@
 # Modèle Conceptuel de Données (MCD) — DataShare
 
-![MCD DataShare](mcd.svg)
+![MCD DataShare](modele-de-donnees.svg)
 
 ## Lecture des cardinalités (Merise)
 
@@ -60,4 +60,4 @@ erDiagram
   }
 ```
 
-> Image vectorielle : [`mcd.svg`](mcd.svg). Source Mermaid ci-dessus (modifiable sur [mermaid.live](https://mermaid.live)).
+> Image vectorielle : [`modele-de-donnees.svg`](modele-de-donnees.svg). Source Mermaid ci-dessus (modifiable sur [mermaid.live](https://mermaid.live)).

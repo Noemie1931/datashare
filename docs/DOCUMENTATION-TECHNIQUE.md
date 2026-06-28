@@ -60,7 +60,7 @@ Tous les choix de stack sont pris **parmi les options imposées** ; voici le pou
 
 ## 3. Modèle de données
 
-Deux entités : **USER** (1) — (n) **FILE**, reliées par une clé étrangère `user_id` (nullable, `ON DELETE CASCADE`). MCD complet (formalisme Merise) + tables détaillées : **[MCD.md](MCD.md)**.
+Deux entités : **USER** (1) — (n) **FILE**, reliées par une clé étrangère `user_id` (nullable, `ON DELETE CASCADE`). MCD complet (formalisme Merise) + tables détaillées : **[MODELE-DE-DONNEES.md](MODELE-DE-DONNEES.md)**.
 
 ---
 
