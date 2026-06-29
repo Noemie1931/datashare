@@ -21,6 +21,23 @@ dispose.
   plafonnement de la durée d'expiration côté serveur
 - Purge automatique des fichiers expirés (tâche planifiée / cron)
 
+## Traçabilité dans l'historique Git (workflow IA → revue humaine)
+
+Pour rendre la délégation **vérifiable**, la contribution de l'IA est isolée dans des
+commits dédiés (convention *conventional commit*), suivis de ma revue humaine :
+
+- `feat(ai): bouton "Copier le lien" dans Mon espace (US05, copilote IA)` (`7876458`)
+  — première implémentation générée par le copilote IA.
+- `fix: revue humaine du bouton "Copier le lien" (repli presse-papier + accessibilité)`
+  (`c62e629`) — ma relecture : repli `textarea`/`execCommand` quand la Clipboard API est
+  indisponible (contexte non sécurisé), annonce `aria-live` pour les lecteurs d'écran,
+  nettoyage du minuteur au démontage du composant.
+- `test: parcours Cypress couvre le bouton "Copier le lien" de Mon espace (US05)`
+  (`4a590fc`) — vérification automatisée du parcours (copie + retour « Lien copié »).
+
+Ce triptyque **IA → revue → test** illustre concrètement la posture : l'IA propose,
+je relis et corrige, je vérifie.
+
 ## Rôle de supervision
 
 - Je définis chaque tâche et son périmètre avant de la confier.
