@@ -1,14 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './common/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Lit les cookies des requêtes (dont le cookie HttpOnly qui porte le JWT).
+  app.use(cookieParser());
+
   // CORS : l'origine autorisée vient d'une variable d'environnement (jamais codée
-  // en dur). En dev, défaut sur le front local ; en prod, on passe le vrai domaine.
+  // en dur). credentials:true autorise l'envoi du cookie d'authentification.
   app.enableCors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true,

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
+import api from '../services/api';
 
 // Contexte d'authentification : centralise l'état de connexion et les actions
 // login/logout, au lieu de les faire descendre en cascade par les props
@@ -6,22 +7,30 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 
 interface AuthContextType {
   isLoggedIn: boolean;
-  login: (token: string) => void;
+  login: () => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  // Le JWT est dans un cookie HttpOnly (illisible par JS). On ne garde qu'un
+  // indicateur NON sensible en localStorage pour piloter l'affichage connecté.
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('auth'));
 
-  const login = (token: string) => {
-    localStorage.setItem('token', token);
+  const login = () => {
+    localStorage.setItem('auth', '1');
     setIsLoggedIn(true);
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    // Seul le serveur peut supprimer le cookie HttpOnly.
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      // on déconnecte côté client quoi qu'il arrive
+    }
+    localStorage.removeItem('auth');
     setIsLoggedIn(false);
   };
 

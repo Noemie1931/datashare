@@ -36,8 +36,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const endpoint = isRegister ? '/auth/register' : '/auth/login';
-      const res = await api.post(endpoint, { email, password });
-      login(res.data.access_token);
+      await api.post(endpoint, { email, password });
+      // Le serveur a posé le cookie HttpOnly ; on met juste à jour l'état d'affichage.
+      login();
       window.location.href = '/';
     } catch (e: any) {
       setError(e.response?.data?.message || 'Une erreur est survenue');
