@@ -29,11 +29,13 @@ L'association **DÉPOSER** se traduit physiquement par une **clé étrangère `u
 | storagePath | VARCHAR | chemin sur le disque |
 | mimeType | VARCHAR | type MIME |
 | sizeBytes | INTEGER | taille (max 1 Go) |
-| downloadToken | UUID | **unique**, sert de lien de partage |
+| downloadToken | VARCHAR | **unique** ; valeur = UUID v4 généré, sert de lien de partage |
 | passwordHash | VARCHAR | **nullable** (mot de passe optionnel, haché bcrypt) |
 | expiresAt | TIMESTAMP | date d'expiration (1 à 7 jours) |
 | uploadedAt | TIMESTAMP | auto |
-| *user_id* | UUID | **clé étrangère** → `users.id`, nullable, CASCADE |
+| *user_id* | VARCHAR | **clé étrangère** → `users.id` (UUID), nullable, CASCADE |
+
+> **Note de typage :** `downloadToken` et `user_id` sont déclarés en `VARCHAR` côté TypeORM (la valeur stockée reste un UUID v4 généré par `uuidv4()`). Seules les clés primaires `id` sont en type `uuid` natif PostgreSQL (`@PrimaryGeneratedColumn('uuid')`). Choix d'implémentation sans impact fonctionnel : les comparaisons par token restent exactes.
 
 ## Source du diagramme (Mermaid, éditable)
 
@@ -52,11 +54,11 @@ erDiagram
     varchar storagePath
     varchar mimeType
     int sizeBytes
-    uuid downloadToken UK
+    varchar downloadToken UK
     varchar passwordHash "nullable"
     timestamp expiresAt
     timestamp uploadedAt
-    uuid user_id FK "nullable"
+    varchar user_id FK "nullable"
   }
 ```
 

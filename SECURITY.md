@@ -35,6 +35,30 @@ correctif est disponible.
 - **Conteneurisation complète** : front + back + base via `docker-compose` ; endpoint `/health` pour le health check Docker.
 - **Couverture des fichiers de sécurité** : `jwt.strategy.ts` et `jwt-auth.guard.ts` sont désormais testés (étaient à 0 %) → couverture globale ~99 %.
 
+## Conformité RGPD (données personnelles)
+
+DataShare manipule des données personnelles : il faut donc cadrer leur usage.
+
+| Donnée personnelle | Pourquoi on la stocke | Durée de conservation |
+|---|---|---|
+| Email du compte | Identifier l'utilisateur, le connecter | Tant que le compte existe |
+| Mot de passe (haché bcrypt) | Authentifier | Tant que le compte existe ; jamais en clair |
+| Fichiers téléversés + métadonnées | Le service de partage | **1 à 7 jours** puis **purge automatique** (cron) |
+| Logs (méthode, route, statut, latence) | Exploitation/observabilité | Court terme ; **pas de donnée personnelle** dans les logs |
+
+**Minimisation** : on ne collecte que l'email et le mot de passe (aucune donnée superflue :
+ni nom, ni adresse, ni téléphone).
+
+**Droit à l'effacement** : un fichier peut être supprimé à tout moment par son propriétaire
+(suppression du disque **et** de la base), et les fichiers expirés sont purgés automatiquement.
+
+**Sécurité des données** : mots de passe hachés (bcrypt), accès aux fichiers cloisonné par
+propriétaire, liens non devinables (UUID) et temporaires.
+
+**Reste à faire pour une conformité complète (prod)** : une page « suppression de compte »
+(effaçant le compte et tous ses fichiers), une politique de confidentialité, et le
+consentement explicite. À ce stade MVP, ces points sont identifiés mais non implémentés.
+
 ## Avant une mise en production (reste à faire)
 
 - Restreindre le CORS au vrai domaine de production

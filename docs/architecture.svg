@@ -27,7 +27,9 @@
   <text x="532" y="214" text-anchor="middle" font-size="12" fill="#1A1A1A">Controller → Service</text>
   <text x="532" y="236" text-anchor="middle" font-size="12" fill="#1A1A1A">TypeORM (repository)</text>
   <text x="532" y="258" text-anchor="middle" font-size="12" fill="#1A1A1A">Intercepteur de logs</text>
-  <text x="532" y="282" text-anchor="middle" font-size="11" fill="#444">Node · port 3000 · /health</text>
+  <text x="532" y="280" text-anchor="middle" font-size="12" fill="#E65100">Cron de purge @nestjs/schedule</text>
+  <text x="532" y="296" text-anchor="middle" font-size="10.5" fill="#E65100">(fichiers expirés · 3h/jour)</text>
+  <text x="532" y="320" text-anchor="middle" font-size="11" fill="#444">Node · port 3000 · /health</text>
 
   <!-- PostgreSQL cylinder -->
   <g>

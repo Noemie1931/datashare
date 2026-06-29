@@ -71,19 +71,17 @@ unitaires SONT des tests de sécurité**. Concrètement, sont testés :
 
 En complément, audit des dépendances avec `npm audit` (voir `SECURITY.md`).
 
-## 5. Test de performance (k6)
+## 5. Tests de performance (k6)
 
-Test de charge sur `POST /auth/login` (la route la plus coûteuse : appel base + `bcrypt.compare`),
-**10 utilisateurs en parallèle pendant 30 s** :
+Deux scénarios de charge, **10 utilisateurs en parallèle pendant 30 s**, budget p95 < 500 ms :
 
-| Métrique | Valeur |
-|---|---|
-| Succès | 100 % |
-| Médiane | ~101 ms |
-| p95 | ~157 ms |
-| Budget | < 500 ms (respecté) |
+| Scénario | Endpoint(s) | Succès | p95 |
+|---|---|---|---|
+| `k6_test.js` | `POST /auth/login` (bcrypt) | 100 % | ~157 ms |
+| `k6_upload_test.js` | `upload` + `download` (transfert de fichiers) | 100 % | upload ~41 ms / download ~22 ms |
 
-Détail dans `PERF.md`.
+Le second scénario couvre le **chemin critique du produit** (téléversement puis téléchargement,
+avec authentification). Détail des deux et **budget de performance front (Lighthouse)** dans `PERF.md`.
 
 ## 6. Couverture
 
@@ -158,5 +156,6 @@ cd backend && npm run test:cov
 cd frontend && npx cypress run --browser chrome
 
 # performance (k6 installé)
-k6 run k6_test.js
+k6 run k6_test.js          # charge sur /auth/login
+k6 run k6_upload_test.js   # charge sur upload + download
 ```

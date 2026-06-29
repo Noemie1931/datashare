@@ -22,7 +22,7 @@
   <text x="616" y="198" font-size="12" fill="#1A1A1A">storagePath : VARCHAR</text>
   <text x="616" y="224" font-size="12" fill="#1A1A1A">mimeType : VARCHAR</text>
   <text x="616" y="250" font-size="12" fill="#1A1A1A">sizeBytes : INTEGER</text>
-  <text x="616" y="276" font-size="12" fill="#1A1A1A">downloadToken : UUID (unique)</text>
+  <text x="616" y="276" font-size="12" fill="#1A1A1A">downloadToken : VARCHAR (unique)</text>
   <text x="616" y="302" font-size="12" fill="#1A1A1A">passwordHash : VARCHAR (null)</text>
   <text x="616" y="328" font-size="12" fill="#1A1A1A">expiresAt : TIMESTAMP</text>
   <text x="616" y="354" font-size="12" fill="#1A1A1A">uploadedAt : TIMESTAMP</text>

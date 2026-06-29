@@ -9,7 +9,7 @@ L'application suit une architecture **3 couches**, entièrement conteneurisée a
 | Couche | Technologie | Rôle |
 |---|---|---|
 | **Frontend** | React + Vite + TypeScript, servi par nginx (port 5173) | Interface dans le navigateur ; Axios avec un intercepteur qui ajoute le JWT |
-| **Backend** | NestJS + TypeScript (port 3000) | API REST ; modules Auth / Users / Files ; Guard JWT ; logique métier |
+| **Backend** | NestJS + TypeScript (port 3000) | API REST ; modules Auth / Users / Files ; Guard JWT ; logique métier ; **cron de purge** des fichiers expirés |
 | **Base de données** | PostgreSQL (port 5433 → 5432) | Stocke les comptes et les **métadonnées** des fichiers |
 | **Stockage fichiers** | Volume disque `/uploads` | Les fichiers eux-mêmes (pas en base) |
 
@@ -21,6 +21,8 @@ L'application suit une architecture **3 couches**, entièrement conteneurisée a
 4. Les **fichiers** sont écrits/lus sur le disque (`/uploads`) en **streaming** (`fs.createReadStream`), jamais chargés entièrement en mémoire.
 5. La réponse JSON (ou le flux du fichier) remonte jusqu'au navigateur.
 
+**Tâche de fond (hors requête) :** un **cron** (`@nestjs/schedule`, tous les jours à 3 h) purge les fichiers expirés — suppression **du disque** (`/uploads`) **et de la base**. C'est ce mécanisme qui applique le cycle de vie « lien temporaire » (expiration 1 à 7 jours), au cœur du produit.
+
 Le frontend ne touche **jamais** la base directement : le backend est l'unique intermédiaire, ce qui centralise la sécurité.
 
 ## Source du diagramme (Mermaid, éditable)
@@ -31,6 +33,9 @@ graph LR
   F -->|"API REST (HTTP/JSON)<br/>Authorization: Bearer JWT"| B["Backend NestJS · 3000<br/>Auth · Users · Files<br/>Guard JWT"]
   B -->|TypeORM / SQL| D[("PostgreSQL<br/>5433 → 5432")]
   B -->|fs stream| S["/uploads<br/>(volume)"]
+  B -.->|tâche planifiée| C["Cron de purge<br/>@nestjs/schedule · 3h/jour"]
+  C -.->|supprime les fichiers expirés| D
+  C -.->|et leur copie disque| S
 ```
 
 > Image vectorielle : [`architecture.svg`](architecture.svg). Source Mermaid ci-dessus (modifiable sur [mermaid.live](https://mermaid.live)).
