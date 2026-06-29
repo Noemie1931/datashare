@@ -7,8 +7,10 @@ Application de partage de fichiers via liens temporaires.
 - **Backend** : NestJS (TypeScript)
 - **Frontend** : React + Vite (TypeScript)
 - **Base de données** : PostgreSQL (Docker)
-- **Auth** : JWT (secret en variable d'environnement)
+- **Auth** : JWT dans un **cookie HttpOnly** (secret en variable d'environnement)
+- **API** : validation par DTO (class-validator), **doc Swagger** sur `/api`, routes métier versionnées sous `/v1`
 - **Conteneurisation** : Docker Compose (PostgreSQL + backend + frontend)
+- **CI** : GitHub Actions (tests + build rejoués à chaque push)
 
 ## Prérequis
 
@@ -56,11 +58,12 @@ npm run dev
 ## Accès
 
 - Frontend : http://localhost:5173
-- Backend : http://localhost:3000
+- Backend (API, routes métier sous `/v1`) : http://localhost:3000
+- **Documentation API interactive (Swagger)** : http://localhost:3000/api
 
 ## Tests
 
-58 tests (47 unitaires + 7 intégration + 4 e2e), couverture ~99 %. Détail dans `TESTING.md`.
+58 tests (47 unitaires + 7 intégration + 4 e2e), couverture **98,7 %** (logique métier à 100 %). Détail dans `TESTING.md`.
 
 ```bash
 cd backend
@@ -87,5 +90,6 @@ k6 run k6_test.js   # test de performance (depuis la racine)
 - Lien de téléchargement unique
 - Protection par mot de passe (optionnelle)
 - Lien valable 1 à 7 jours, puis refusé
-- Espace personnel (historique, suppression)
-- Authentification JWT
+- Espace personnel (historique, suppression, pagination)
+- Authentification JWT en cookie HttpOnly
+- Interface accessible (WCAG/ARIA de base) et responsive (mobile/desktop)

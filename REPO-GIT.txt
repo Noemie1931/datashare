@@ -10,26 +10,27 @@ Le dépôt contient :
    - Frontend : React + Vite + TypeScript
    - Backend  : NestJS + TypeScript
    - Base de données : PostgreSQL (TypeORM)
-   - Historique de commits structuré (messages typés : doc :, feat :, fix :, durcissement :, ux :, observabilité :).
+   - Historique de commits structuré, type "conventional commit" (feat, fix, doc, test, ci, perf...).
 
 2. README détaillé avec instructions d'installation et d'utilisation
    https://github.com/Noemie1931/datashare/blob/main/README.md
 
-3. Scripts de déploiement pour installer et configurer la base de données
+3. Scripts de déploiement et intégration continue
    - setup.sh            : installe la base PostgreSQL (conteneur) + les dépendances
    - docker-compose.yml  : PostgreSQL + backend + frontend en conteneurs (docker-compose up -d --build)
+   - .github/workflows/ci.yml : CI GitHub Actions (tests + build rejoués à chaque push)
 
 4. Suivi de qualité et de maintenance (plusieurs fichiers)
-   - TESTING.md     : plan de tests, 58 tests (47 unitaires + 7 intégration + 4 e2e), couverture ~99 %
-   - SECURITY.md    : mesures de sécurité, scan npm audit
-   - PERF.md        : test de charge k6, budget de performance front
-   - MAINTENANCE.md : procédures de mise à jour et de maintenance
+   - TESTING.md     : plan de tests, 58 tests (47 unitaires + 7 intégration + 4 e2e), couverture 98,7 %
+   - SECURITY.md    : mesures de sécurité, conformité RGPD, scan npm audit
+   - PERF.md        : test de charge k6 (login + upload/download), budget de performance front (Lighthouse)
+   - MAINTENANCE.md : procédures de mise à jour, migrations, suivi des vulnérabilités
 
 Documentation et support de présentation (également dans le dépôt) :
    - docs/DOCUMENTATION-TECHNIQUE.md (+ .pdf)
    - docs/ARCHITECTURE.md  (schéma d'architecture)
    - docs/MODELE-DE-DONNEES.md  (MCD)
-   - openapi.yaml  (contrat d'interface) ; docs/api.html (doc API interactive)
+   - openapi.yaml  (contrat d'interface OpenAPI 3.0.3) ; doc Swagger interactive servie sur /api
    - docs/SUPPORT-DE-PRESENTATION.pdf  (slide deck)
 
 Documentation en ligne (GitHub Pages) :
