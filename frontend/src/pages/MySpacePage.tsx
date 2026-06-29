@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './MySpacePage.module.css';
@@ -29,6 +29,7 @@ export default function MySpacePage() {
   const [filter, setFilter] = useState<Filter>('all');
   const [toDelete, setToDelete] = useState<FileItem | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const copyTimer = useRef<number | undefined>(undefined);
 
   const loadFiles = async () => {
     const res = await api.get(`/v1/files?filter=${filter}`);
@@ -51,10 +52,32 @@ export default function MySpacePage() {
 
   const copyLink = async (file: FileItem) => {
     const url = `${window.location.origin}/d/${file.downloadToken}`;
-    await navigator.clipboard.writeText(url);
-    setCopiedId(file.id);
-    setTimeout(() => setCopiedId(null), 2000);
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        // Repli pour les contextes non securises (http hors localhost) ou
+        // les navigateurs sans Clipboard API.
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopiedId(file.id);
+      window.clearTimeout(copyTimer.current);
+      copyTimer.current = window.setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      // Si la copie echoue, on ouvre le lien pour que l'utilisateur le copie a la main.
+      openFile(file);
+    }
   };
+
+  // Nettoyage du minuteur pour eviter une mise a jour d'etat apres demontage.
+  useEffect(() => () => window.clearTimeout(copyTimer.current), []);
 
   const expiryLabel = (dateStr: string) => {
     const d = Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86400000);
@@ -102,6 +125,11 @@ export default function MySpacePage() {
         {/* Content */}
         <main className={styles.content}>
           <h2 className={styles.title}>Mes fichiers</h2>
+
+          {/* Annonce accessible (lecteurs d'ecran) du resultat de la copie */}
+          <p className={styles.srOnly} role="status" aria-live="polite">
+            {copiedId ? 'Lien de telechargement copie dans le presse-papier' : ''}
+          </p>
 
           {/* Switch */}
           <div className={styles.switchContainer}>
