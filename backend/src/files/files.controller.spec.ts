@@ -70,20 +70,24 @@ describe('FilesController', () => {
 
   describe('getFiles', () => {
     it("renvoie la liste des fichiers de l'utilisateur avec hasPassword", async () => {
-      mockFilesService.findByUser.mockResolvedValue([
-        {
-          id: 'f1',
-          originalName: 'a.txt',
-          sizeBytes: 10,
-          uploadedAt: futureDate,
-          expiresAt: futureDate,
-          downloadToken: 't',
-          passwordHash: 'hash',
-        },
-      ]);
+      mockFilesService.findByUser.mockResolvedValue({
+        items: [
+          {
+            id: 'f1',
+            originalName: 'a.txt',
+            sizeBytes: 10,
+            uploadedAt: futureDate,
+            expiresAt: futureDate,
+            downloadToken: 't',
+            passwordHash: 'hash',
+          },
+        ],
+        total: 1,
+      });
       const result = await controller.getFiles('all', { user: { sub: 'u1' } });
-      expect(result).toHaveLength(1);
-      expect(result[0].hasPassword).toBe(true);
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].hasPassword).toBe(true);
+      expect(result.total).toBe(1);
     });
   });
 

@@ -72,9 +72,17 @@ export class FilesService {
     return this.repo.save(newFile);
   }
 
-  async findByUser(userId: string, filter?: string): Promise<FileEntity[]> {
+  // Liste paginée des fichiers d'un utilisateur. La pagination (skip/take) évite
+  // de tout charger d'un coup quand un compte a beaucoup de fichiers.
+  async findByUser(
+    userId: string,
+    filter?: string,
+    page = 1,
+    limit = 20,
+  ): Promise<{ items: FileEntity[]; total: number }> {
     const query = this.repo.createQueryBuilder('file')
-      .where('file.user_id = :userId', { userId });
+      .where('file.user_id = :userId', { userId })
+      .orderBy('file.uploadedAt', 'DESC');
 
     if (filter === 'active') {
       query.andWhere('file.expiresAt > :now', { now: new Date() });
@@ -82,7 +90,12 @@ export class FilesService {
       query.andWhere('file.expiresAt <= :now', { now: new Date() });
     }
 
-    return query.getMany();
+    const [items, total] = await query
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return { items, total };
   }
 
   async findByToken(token: string): Promise<FileEntity> {

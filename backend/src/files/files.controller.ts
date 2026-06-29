@@ -34,17 +34,35 @@ export class FilesController {
 
   @Get('files')
   @UseGuards(JwtAuthGuard)
-  async getFiles(@Query('filter') filter: string, @Req() req: any) {
-    const files = await this.filesService.findByUser(req.user.sub, filter);
-    return files.map((file) => ({
-      id: file.id,
-      originalName: file.originalName,
-      sizeBytes: file.sizeBytes,
-      uploadedAt: file.uploadedAt,
-      expiresAt: file.expiresAt,
-      downloadToken: file.downloadToken,
-      hasPassword: !!file.passwordHash,
-    }));
+  async getFiles(
+    @Query('filter') filter: string,
+    @Req() req: any,
+    @Query('page') page = '1',
+    @Query('limit') limit = '20',
+  ) {
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
+    const { items, total } = await this.filesService.findByUser(
+      req.user.sub,
+      filter,
+      pageNum,
+      limitNum,
+    );
+    return {
+      items: items.map((file) => ({
+        id: file.id,
+        originalName: file.originalName,
+        sizeBytes: file.sizeBytes,
+        uploadedAt: file.uploadedAt,
+        expiresAt: file.expiresAt,
+        downloadToken: file.downloadToken,
+        hasPassword: !!file.passwordHash,
+      })),
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
+    };
   }
 
   @Delete('files/:id')

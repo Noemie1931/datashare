@@ -99,7 +99,9 @@ describe('AppController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
 
-      expect(Array.isArray(res.body)).toBe(true);
+      // Réponse paginée : { items, total, page, limit, totalPages }
+      expect(Array.isArray(res.body.items)).toBe(true);
+      expect(typeof res.body.total).toBe('number');
     });
   });
 

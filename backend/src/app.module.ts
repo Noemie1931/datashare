@@ -20,7 +20,11 @@ import { FilesModule } from './files/files.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true,
+      // synchronize crée/met à jour le schéma automatiquement depuis les entités.
+      // Pratique en dev, DANGEREUX en prod (peut supprimer des colonnes). On le
+      // désactive en production via DB_SYNCHRONIZE=false (on passe alors par des
+      // migrations TypeORM versionnées : voir MAINTENANCE.md).
+      synchronize: process.env.DB_SYNCHRONIZE !== 'false',
     }),
     AuthModule,
     UsersModule,

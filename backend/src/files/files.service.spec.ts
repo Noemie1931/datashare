@@ -38,7 +38,10 @@ describe('FilesService', () => {
     createQueryBuilder: jest.fn().mockReturnValue({
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
-      getMany: jest.fn().mockResolvedValue([mockFile]),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getManyAndCount: jest.fn().mockResolvedValue([[mockFile], 1]),
     }),
   };
 
@@ -65,19 +68,20 @@ describe('FilesService', () => {
     await expect(service.findByToken('invalid')).rejects.toThrow(NotFoundException);
   });
 
-  it('should find files by user', async () => {
-    const files = await service.findByUser('user-123');
-    expect(files).toHaveLength(1);
+  it('should find files by user (paginated)', async () => {
+    const result = await service.findByUser('user-123');
+    expect(result.items).toHaveLength(1);
+    expect(result.total).toBe(1);
   });
 
   it('should find files by user with active filter', async () => {
-    const files = await service.findByUser('user-123', 'active');
-    expect(files).toHaveLength(1);
+    const result = await service.findByUser('user-123', 'active');
+    expect(result.items).toHaveLength(1);
   });
 
   it('should find files by user with expired filter', async () => {
-    const files = await service.findByUser('user-123', 'expired');
-    expect(files).toHaveLength(1);
+    const result = await service.findByUser('user-123', 'expired');
+    expect(result.items).toHaveLength(1);
   });
 
   it('should verify password correctly when no password set', async () => {
