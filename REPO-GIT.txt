@@ -11,6 +11,8 @@ Le dépôt contient :
    - Backend  : NestJS + TypeScript
    - Base de données : PostgreSQL (TypeORM)
    - Historique de commits structuré, type "conventional commit" (feat, fix, doc, test, ci, perf...).
+   - Contribution du copilote IA isolée dans un commit "feat(ai):", suivie d'une revue
+     humaine ("fix:") et d'un test ("test:"). Traçabilité détaillée dans AI_USAGE.md.
 
 2. README détaillé avec instructions d'installation et d'utilisation
    https://github.com/Noemie1931/datashare/blob/main/README.md
