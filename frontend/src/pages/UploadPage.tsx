@@ -25,7 +25,7 @@ export default function UploadPage() {
       formData.append('file', file);
       if (password) formData.append('password', password);
       formData.append('expires_in_days', String(days));
-      const res = await api.post('/files/upload', formData);
+      const res = await api.post('/v1/files/upload', formData);
       const token = res.data.download_token;
       setDownloadUrl(`${window.location.origin}/d/${token}`);
     } catch (e: any) {

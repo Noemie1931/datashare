@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     // Seul le serveur peut supprimer le cookie HttpOnly.
     try {
-      await api.post('/auth/logout');
+      await api.post('/v1/auth/logout');
     } catch {
       // on déconnecte côté client quoi qu'il arrive
     }

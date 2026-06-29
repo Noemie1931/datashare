@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
@@ -17,6 +17,10 @@ async function bootstrap() {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true,
   });
+
+  // Versionnage des routes par URI : les routes métier deviennent /v1/...
+  // (les routes publiques /d/... et /health restent neutres, voir @Version).
+  app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
 
   // Validation automatique des entrées via les DTO (class-validator).
   // whitelist : retire les champs non déclarés ; transform : convertit les types.

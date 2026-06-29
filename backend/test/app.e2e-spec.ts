@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, VersioningType } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
@@ -13,6 +13,7 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
     await app.init();
   });
 
@@ -36,7 +37,7 @@ describe('AppController (e2e)', () => {
 
     it('POST /auth/register crée un compte et renvoie un token', async () => {
       const res = await request(app.getHttpServer())
-        .post('/auth/register')
+        .post('/v1/auth/register')
         .send({ email, password })
         .expect(201);
 
@@ -46,7 +47,7 @@ describe('AppController (e2e)', () => {
 
     it('POST /auth/login connecte ce compte et renvoie un token', async () => {
       const res = await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/v1/auth/login')
         .send({ email, password })
         .expect(201);
 
@@ -55,7 +56,7 @@ describe('AppController (e2e)', () => {
 
     it('POST /auth/login refuse un mauvais mot de passe (401)', async () => {
       await request(app.getHttpServer())
-        .post('/auth/login')
+        .post('/v1/auth/login')
         .send({ email, password: 'mauvais_mot_de_passe' })
         .expect(401);
     });
@@ -69,13 +70,13 @@ describe('AppController (e2e)', () => {
   describe('Fichiers (/files)', () => {
     it('POST /files/upload sans token est refuse (401)', async () => {
       await request(app.getHttpServer())
-        .post('/files/upload')
+        .post('/v1/files/upload')
         .expect(401);
     });
 
     it('POST /files/upload avec un token invalide est refuse (401)', async () => {
       await request(app.getHttpServer())
-        .post('/files/upload')
+        .post('/v1/files/upload')
         .set('Authorization', 'Bearer token_bidon')
         .expect(401);
     });
@@ -88,14 +89,14 @@ describe('AppController (e2e)', () => {
     it('GET /files avec un token valide est accepte (200)', async () => {
       const creds = { email: `e2e_files_${Date.now()}@test.com`, password: 'password123' };
       const register = await request(app.getHttpServer())
-        .post('/auth/register')
+        .post('/v1/auth/register')
         .send(creds)
         .expect(201);
 
       const token = register.body.access_token;
 
       const res = await request(app.getHttpServer())
-        .get('/files')
+        .get('/v1/files')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
 

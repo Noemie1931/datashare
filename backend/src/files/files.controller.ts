@@ -1,7 +1,7 @@
 import {
   Controller, Post, Get, Delete, Param, Query,
   UseInterceptors, UploadedFile, Body, Req,
-  UseGuards, ForbiddenException, Res
+  UseGuards, ForbiddenException, Res, Version, VERSION_NEUTRAL
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
@@ -73,6 +73,7 @@ export class FilesController {
   }
 
   @Get('d/:token')
+  @Version(VERSION_NEUTRAL)
   async getFileInfo(@Param('token') token: string) {
     const file = await this.filesService.findByToken(token);
     if (new Date() > file.expiresAt) throw new ForbiddenException('Ce lien a expiré');
@@ -86,6 +87,7 @@ export class FilesController {
   }
 
   @Post('d/:token/download')
+  @Version(VERSION_NEUTRAL)
   async downloadFile(
     @Param('token') token: string,
     @Body('password') password: string,

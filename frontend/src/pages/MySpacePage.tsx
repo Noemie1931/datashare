@@ -30,7 +30,7 @@ export default function MySpacePage() {
   const [toDelete, setToDelete] = useState<FileItem | null>(null);
 
   const loadFiles = async () => {
-    const res = await api.get(`/files?filter=${filter}`);
+    const res = await api.get(`/v1/files?filter=${filter}`);
     // Le back renvoie une réponse paginée { items, total, page, limit, totalPages }
     setFiles(res.data.items);
   };
@@ -39,7 +39,7 @@ export default function MySpacePage() {
 
   const confirmDelete = async () => {
     if (!toDelete) return;
-    await api.delete(`/files/${toDelete.id}`);
+    await api.delete(`/v1/files/${toDelete.id}`);
     setToDelete(null);
     loadFiles();
   };

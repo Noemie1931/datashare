@@ -35,7 +35,7 @@ export default function LoginPage() {
     }
     setLoading(true);
     try {
-      const endpoint = isRegister ? '/auth/register' : '/auth/login';
+      const endpoint = isRegister ? '/v1/auth/register' : '/v1/auth/login';
       await api.post(endpoint, { email, password });
       // Le serveur a posé le cookie HttpOnly ; on met juste à jour l'état d'affichage.
       login();

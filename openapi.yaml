@@ -5,9 +5,11 @@ info:
   description: >
     Contrat d'interface de DataShare : partage de fichiers par lien temporaire.
     Le frontend (React) communique avec le backend (NestJS) via cette API REST en JSON.
-    L'authentification se fait par JWT (en-tete Authorization: Bearer). Les routes de
-    telechargement public (/d/...) ne demandent pas de compte : c'est la connaissance du
-    lien (un UUID non devinable) qui fait l'autorisation.
+    Les routes metier sont versionnees sous /v1. L'authentification se fait par JWT
+    depose dans un cookie HttpOnly (avec repli sur l'en-tete Authorization: Bearer pour
+    les clients API). Les routes de telechargement public (/d/...) et le /health ne sont
+    pas versionnees et ne demandent pas de compte : c'est la connaissance du lien (un UUID
+    non devinable) qui fait l'autorisation.
 
 servers:
   - url: http://localhost:3000
@@ -40,7 +42,7 @@ paths:
                 status: ok
                 service: datashare-api
 
-  /auth/register:
+  /v1/auth/register:
     post:
       tags: [Auth]
       summary: Creer un compte
@@ -73,7 +75,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /auth/login:
+  /v1/auth/login:
     post:
       tags: [Auth]
       summary: Se connecter
@@ -100,7 +102,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /files/upload:
+  /v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Se deconnecter
+      description: Supprime le cookie HttpOnly d'authentification cote serveur.
+      responses:
+        '200':
+          description: Deconnecte
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+  /v1/files/upload:
     post:
       tags: [Fichiers]
       summary: Televerser un fichier
@@ -151,7 +166,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /files:
+  /v1/files:
     get:
       tags: [Fichiers]
       summary: Lister mes fichiers
@@ -166,15 +181,41 @@ paths:
             type: string
             enum: [active, expired]
           description: "active = liens encore valides ; expired = liens expires ; absent = tous"
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: "Numero de page (pagination)"
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+          description: "Nombre d'elements par page"
       responses:
         '200':
-          description: Liste des fichiers
+          description: Liste paginée des fichiers
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FileListItem'
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FileListItem'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+                  totalPages:
+                    type: integer
         '401':
           description: Jeton JWT absent ou invalide
           content:
@@ -182,7 +223,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /files/{id}:
+  /v1/files/{id}:
     delete:
       tags: [Fichiers]
       summary: Supprimer un de mes fichiers
