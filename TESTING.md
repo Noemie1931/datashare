@@ -5,7 +5,7 @@ quelques tests d'intégration, quelques tests end-to-end au sommet. S'y ajoutent
 **tests de sécurité** et un **test de performance**.
 
 **Au total : 58 tests, tous au vert** — 47 unitaires (Jest) + 7 d'intégration/e2e API
-(Supertest) + 4 end-to-end navigateur (Cypress). Couverture **~99 %**.
+(Supertest) + 4 end-to-end navigateur (Cypress). Couverture **98,7 %** (logique métier à 100 %).
 
 ## 1. Tests unitaires (Jest) — 47 tests
 
@@ -104,7 +104,7 @@ All files                |  98.71  |  98.50  |
   app.service.ts         |   100   |   100   |
 ```
 
-**~99 % au global** (objectif de 70 % largement dépassé). La logique métier (services) reste à **100 %**.
+**98,7 % au global** (objectif de 70 % largement dépassé). La logique métier (services) reste à **100 %**.
 
 ### Pourquoi pas 100 % ? (à savoir expliquer)
 

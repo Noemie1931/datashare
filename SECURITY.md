@@ -33,7 +33,7 @@ correctif est disponible.
 
 - **`JWT_SECRET` sorti du code** : lu depuis le `.env` via `ConfigService` (signature dans `auth.module.ts`, vérification dans `jwt.strategy.ts`). Plus aucun secret en dur, et le `.env` est dans le `.gitignore`.
 - **Conteneurisation complète** : front + back + base via `docker-compose` ; endpoint `/health` pour le health check Docker.
-- **Couverture des fichiers de sécurité** : `jwt.strategy.ts` et `jwt-auth.guard.ts` sont désormais testés (étaient à 0 %) → couverture globale ~99 %.
+- **Couverture des fichiers de sécurité** : `jwt.strategy.ts` et `jwt-auth.guard.ts` sont désormais testés (étaient à 0 %) → couverture globale **98,7 %** (logique métier à 100 %).
 
 ## Conformité RGPD (données personnelles)
 

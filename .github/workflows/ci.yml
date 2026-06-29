@@ -1,7 +1,7 @@
 name: CI
 
 # Pipeline d'intégration continue : à chaque push sur main et à chaque pull request,
-# on construit et on teste automatiquement le back et le front. Les 57 tests servent
+# on construit et on teste automatiquement le back et le front. Les 58 tests servent
 # de filet de sécurité : une régression bloque la fusion.
 
 on:
