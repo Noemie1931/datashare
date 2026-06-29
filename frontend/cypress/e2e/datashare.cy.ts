@@ -48,6 +48,15 @@ describe('DataShare E2E', () => {
       cy.contains('rapport-e2e.txt', { timeout: 10000 }).should('be.visible')
       cy.contains('Télécharger').should('be.visible').click()
     })
+
+    // 5) L'espace personnel (US05) liste le fichier et permet de copier son lien
+    cy.visit('/my-space')
+    cy.contains('rapport-e2e.txt', { timeout: 10000 }).should('be.visible')
+    cy.window().then((win) => {
+      if (win.navigator.clipboard) cy.stub(win.navigator.clipboard, 'writeText').resolves()
+    })
+    cy.contains('button', 'Copier le lien').first().click()
+    cy.contains('Lien copié').should('be.visible')
   })
 
 })
