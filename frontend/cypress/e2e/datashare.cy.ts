@@ -20,4 +20,34 @@ describe('DataShare E2E', () => {
     cy.contains('Ce lien est invalide').should('be.visible')
   })
 
+  it('Scénario 4 — Parcours complet : inscription, téléversement, lien, téléchargement', () => {
+    const email = `e2e_${Date.now()}@datashare.com`
+
+    // 1) Inscription via le vrai formulaire (le serveur pose le cookie HttpOnly)
+    cy.visit('/login')
+    cy.contains('Créer un compte').click()
+    cy.get('#login-email').type(email)
+    cy.get('#login-password').type('password123')
+    cy.get('#login-confirm').type('password123')
+    cy.contains('Créer mon compte').click()
+
+    // 2) Redirigé vers l'accueil, on téléverse un fichier
+    cy.contains('Tu veux partager un fichier ?', { timeout: 10000 }).should('be.visible')
+    cy.get('input[type="file"]').first().selectFile(
+      { contents: Cypress.Buffer.from('contenu de test bout-en-bout'), fileName: 'rapport-e2e.txt' },
+      { force: true },
+    )
+    cy.contains('Téléverser').click()
+
+    // 3) Le lien de partage s'affiche
+    cy.contains('Copier le lien', { timeout: 10000 }).should('be.visible')
+
+    // 4) On ouvre le lien et on vérifie que le fichier est bien proposé au téléchargement
+    cy.get('a[href*="/d/"]').invoke('attr', 'href').then((href) => {
+      cy.visit(String(href))
+      cy.contains('rapport-e2e.txt', { timeout: 10000 }).should('be.visible')
+      cy.contains('Télécharger').should('be.visible').click()
+    })
+  })
+
 })

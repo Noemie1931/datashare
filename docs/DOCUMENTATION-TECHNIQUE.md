@@ -89,7 +89,7 @@ Mots de passe hachés (bcrypt), JWT signé (secret en variable d'environnement),
 
 ## 6. Qualité, tests et maintenance
 
-57 tests (47 unitaires + 7 intégration + 3 e2e), couverture ~99 %, test de charge k6, logs structurés. Détail : **[../TESTING.md](../TESTING.md)** · performance **[../PERF.md](../PERF.md)** · maintenance **[../MAINTENANCE.md](../MAINTENANCE.md)**.
+58 tests (47 unitaires + 7 intégration + 4 e2e), couverture ~99 %, test de charge k6, logs structurés. Détail : **[../TESTING.md](../TESTING.md)** · performance **[../PERF.md](../PERF.md)** · maintenance **[../MAINTENANCE.md](../MAINTENANCE.md)**.
 
 ---
 

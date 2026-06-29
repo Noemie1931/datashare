@@ -4,8 +4,8 @@ Les tests suivent la **pyramide** : beaucoup de tests unitaires rapides à la ba
 quelques tests d'intégration, quelques tests end-to-end au sommet. S'y ajoutent des
 **tests de sécurité** et un **test de performance**.
 
-**Au total : 57 tests, tous au vert** — 47 unitaires (Jest) + 7 d'intégration/e2e API
-(Supertest) + 3 end-to-end navigateur (Cypress). Couverture **~99 %**.
+**Au total : 58 tests, tous au vert** — 47 unitaires (Jest) + 7 d'intégration/e2e API
+(Supertest) + 4 end-to-end navigateur (Cypress). Couverture **~99 %**.
 
 ## 1. Tests unitaires (Jest) — 47 tests
 
@@ -46,11 +46,13 @@ On lance **toute l'application** (contrôleur + service + vraie base) et on envo
 - **Accès authentifié réussi** : register → token → `GET /files` avec ce token → 200
   (exerce le **Guard** et la **Strategy** de bout en bout)
 
-## 3. Tests end-to-end navigateur (Cypress) — 3 parcours
+## 3. Tests end-to-end navigateur (Cypress) — 4 parcours
 
 - La page d'accueil s'affiche et propose de se connecter
 - Le formulaire de connexion est présent et utilisable
 - Un lien de téléchargement invalide affiche le bon message d'erreur
+- **Parcours complet (vraies interactions)** : inscription via le formulaire → téléversement
+  d'un fichier → récupération du lien de partage → ouverture du lien et téléchargement
 
 > Besoin du back ? Afficher une page non ; le scénario du lien invalide fait un vrai
 > appel à l'API et n'affiche le message que si le back renvoie 404. Un vrai end-to-end

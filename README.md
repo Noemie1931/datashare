@@ -60,7 +60,7 @@ npm run dev
 
 ## Tests
 
-57 tests (47 unitaires + 7 intégration + 3 e2e), couverture ~99 %. Détail dans `TESTING.md`.
+58 tests (47 unitaires + 7 intégration + 4 e2e), couverture ~99 %. Détail dans `TESTING.md`.
 
 ```bash
 cd backend
