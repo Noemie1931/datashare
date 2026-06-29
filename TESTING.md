@@ -87,24 +87,24 @@ avec authentification). Détail des deux et **budget de performance front (Light
 
 ## 6. Couverture
 
-![Rapport de couverture Jest/Istanbul — 99,34 % statements](docs/coverage_report.png)
+![Rapport de couverture Jest/Istanbul — 98,71 % statements](docs/coverage_report.png)
 
 *Capture réelle du rapport généré par `npm run test:cov`.*
 
 ```
 File                     | % Stmts | % Lines |
 -------------------------|---------|---------|
-All files                |  99.34  |  99.23  |
+All files                |  98.71  |  98.50  |
   auth.service.ts        |   100   |   100   |
-  jwt.strategy.ts        |   100   |   100   |
+  jwt.strategy.ts        |  90.90  |  88.88  |
   jwt-auth.guard.ts      |   100   |   100   |
   users.service.ts       |   100   |   100   |
-  files.service.ts       |  98.70  |  98.57  |
+  files.service.ts       |  98.71  |  98.59  |
   logging.interceptor.ts |   100   |   100   |
   app.service.ts         |   100   |   100   |
 ```
 
-~99 % au global (objectif de 70 % largement dépassé).
+**~99 % au global** (objectif de 70 % largement dépassé). La logique métier (services) reste à **100 %**.
 
 ### Pourquoi pas 100 % ? (à savoir expliquer)
 
@@ -139,6 +139,14 @@ La **vraie logique de purge** (`purgeExpired`) est testée à 100 % ; seul le *w
 - L126 : purge quand il n'y a **aucun** fichier expiré
 
 Ces chemins ne changent pas le comportement.
+
+**4. L'extracteur de cookie du JWT** — `jwt.strategy.ts` L10 :
+
+```ts
+const cookieExtractor = (req) => req?.cookies?.access_token || null;
+```
+
+Cette fonction lit le JWT dans le cookie HttpOnly. Elle est appelée par Passport **au moment d'une vraie requête HTTP** ; les tests unitaires, eux, testent `validate()`, pas l'extraction. Le bon fonctionnement du cookie est vérifié de bout en bout par les tests d'intégration (Supertest) et Cypress, qui ne comptent pas dans cette couverture *unitaire*.
 
 > **À retenir :** tester 100 % n'est pas le but, et 100 % de branches est même impossible ici (point n°1). La couverture est un indicateur ; on la concentre là où il y a du risque.
 
