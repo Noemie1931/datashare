@@ -1,0 +1,368 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: linear-gradient(172.84deg, #FFB88C 2.29%, #DE6262 97.71%);
+  border-right: 2px solid rgba(98, 54, 26, 0.15);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.sidebarHeader {
+  padding: 24px 20px;
+}
+
+.logo {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 18px;
+  color: white;
+  letter-spacing: -0.3px;
+}
+
+.sidebarTabWrap {
+  padding: 12px 16px;
+}
+
+.sidebarTab {
+  padding: 8px 18px;
+  background: #FDF0E9;
+  color: #333;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+  text-align: left;
+}
+
+.copyright {
+  margin-top: auto;
+  padding: 20px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.rightSide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #FDF8F4;
+}
+
+.topBar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  height: 64px;
+  padding: 0 28px;
+  background: #FCEEE6;
+}
+
+.darkPill {
+  padding: 9px 18px;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: transparent;
+  color: #E07A3A;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.content {
+  padding: 28px 36px;
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+}
+
+.switchContainer {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: #FBE9E0;
+  border-radius: 999px;
+}
+
+.switchSegment {
+  padding: 6px 20px;
+  background: transparent;
+  color: #111;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.switchSegmentActive {
+  background: #E8836B;
+  font-weight: 600;
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.emptyText {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #FCEEE6;
+  border: 1px solid #F5EBE3;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  gap: 12px;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.fileIcon {
+  flex-shrink: 0;
+}
+
+.fileText {
+  min-width: 0;
+}
+
+.fileName {
+  font-weight: 600;
+  font-size: 14px;
+  color: #111;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileExpiry {
+  font-size: 12px;
+  color: #111;
+  margin-top: 2px;
+}
+
+.fileExpiryExpired {
+  color: #c0392b;
+}
+
+.expiredNote {
+  font-size: 13px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.fileActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.lockIcon {
+  display: inline-flex;
+  color: #111;
+}
+
+.outlineBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: white;
+  color: #E07A3A;
+  border: 1px solid #F0B89A;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalCard {
+  background: white;
+  padding: 24px 28px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.modalTitle {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+
+.modalText {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: #666;
+  word-break: break-all;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancelBtn {
+  padding: 9px 18px;
+  background: #FBE4D8;
+  color: #E07A3A;
+  border: 1px solid #F0B89A;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.deleteBtn {
+  padding: 9px 18px;
+  background: #E07A3A;
+  color: white;
+  border: 1px solid #E07A3A;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Accessibilite : focus clavier visible (remplace les outline:none implicites) */
+.logo:focus-visible,
+.sidebarTab:focus-visible,
+.darkPill:focus-visible,
+.logoutBtn:focus-visible,
+.switchSegment:focus-visible,
+.outlineBtn:focus-visible,
+.cancelBtn:focus-visible,
+.deleteBtn:focus-visible {
+  outline: 2px solid #E07A3A;
+  outline-offset: 2px;
+}
+
+/* Responsive : sidebar en barre du haut, contenu en dessous */
+@media (max-width: 640px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    flex-direction: row;
+    align-items: center;
+    border-right: none;
+    border-bottom: 2px solid rgba(98, 54, 26, 0.15);
+    flex-wrap: wrap;
+  }
+
+  .sidebarHeader {
+    padding: 16px 20px;
+  }
+
+  .sidebarTabWrap {
+    padding: 12px 16px;
+    flex: 1;
+  }
+
+  .sidebarTab {
+    width: auto;
+  }
+
+  .copyright {
+    margin-top: 0;
+    padding: 16px 20px;
+    width: 100%;
+  }
+
+  .topBar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 12px 20px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .fileRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .fileActions {
+    flex-wrap: wrap;
+  }
+
+  .expiredNote {
+    flex-shrink: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .switchContainer {
+    display: flex;
+    width: 100%;
+  }
+
+  .switchSegment {
+    flex: 1;
+    padding: 6px 12px;
+  }
+}

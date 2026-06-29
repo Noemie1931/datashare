@@ -1,0 +1,298 @@
+.bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(172.84deg, #FFB88C 2.29%, #DE6262 97.71%);
+  padding: 80px 20px 40px;
+}
+
+.idle {
+  text-align: center;
+}
+
+.idleTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 28px;
+}
+
+.uploadLabel {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.uploadCircle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  transition: opacity 0.15s;
+}
+
+.card {
+  background: white;
+  padding: 28px 32px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+}
+
+.cardTitle {
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+}
+
+.cardTitleCenter {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+}
+
+.error {
+  color: #e05a4e;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.fileChip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  padding: 10px 0;
+  margin-bottom: 18px;
+}
+
+.fileIcon {
+  flex-shrink: 0;
+}
+
+.fileInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.fileName {
+  font-weight: 500;
+  font-size: 13px;
+  color: #111;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileSize {
+  font-size: 11px;
+  color: #888;
+}
+
+.changerLabel {
+  cursor: pointer;
+}
+
+.changerBtn {
+  display: inline-block;
+  padding: 5px 14px;
+  background: white;
+  color: #E07A3A;
+  border: 1px solid #F0B89A;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  font-size: 14px;
+  background: white;
+  box-sizing: border-box;
+}
+
+.passwordInput {
+  margin-bottom: 4px;
+}
+
+.passwordHint {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.selectWrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.select {
+  margin-bottom: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.selectArrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.primaryBtn {
+  width: 100%;
+  padding: 11px;
+  background: #FBE4D8;
+  color: #E07A3A;
+  border: 1px solid #F0B89A;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.primaryBtnInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.successText {
+  font-size: 13px;
+  color: #111;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.linkBox {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+}
+
+.downloadLink {
+  font-size: 13px;
+  color: #E07A3A;
+  word-break: break-all;
+  text-decoration: underline;
+}
+
+.copyRow {
+  display: flex;
+  justify-content: center;
+}
+
+.copyBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #FBE4D8;
+  color: #E07A3A;
+  border: 1px solid #F0B89A;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 48px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Accessibilite : focus clavier visible (remplace outline:none) */
+.input:focus-visible,
+.select:focus-visible,
+.primaryBtn:focus-visible,
+.copyBtn:focus-visible,
+.changerBtn:focus-visible,
+.uploadLabel:focus-visible,
+.downloadLink:focus-visible {
+  outline: 2px solid #E07A3A;
+  outline-offset: 2px;
+}
+
+/* Champ fichier accessible : masque visuellement mais focusable au clavier
+   (remplace display:none, qui retire l'element du parcours clavier) */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Quand le champ fichier (cache) recoit le focus clavier, on montre l'anneau
+   sur l'element visible associe (le cercle d'upload ou le bouton Changer) */
+.uploadLabel:focus-within .uploadCircle,
+.changerLabel:focus-within .changerBtn {
+  outline: 2px solid #E07A3A;
+  outline-offset: 2px;
+}
+
+/* Responsivite */
+@media (max-width: 640px) {
+  .bg {
+    padding: 64px 16px 32px;
+  }
+
+  .card {
+    padding: 24px 20px;
+    max-width: 380px;
+  }
+
+  .footer {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 20px 18px;
+  }
+
+  .idleTitle {
+    font-size: 20px;
+  }
+}

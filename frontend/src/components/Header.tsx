@@ -1,61 +1,42 @@
 import { useNavigate } from 'react-router-dom';
+import styles from './Header.module.css';
+import { useAuth } from '../context/AuthContext';
 
-export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
+export default function Header() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   return (
-    <header style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      height: '72px',
-      padding: '0 48px',
-      gap: '10px',
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 100,
-    }}>
-      <span
+    <header className={styles.header}>
+      <button
+        type="button"
         onClick={() => navigate('/')}
-        style={{
-          fontWeight: 700,
-          fontSize: '18px',
-          color: '#111',
-          cursor: 'pointer',
-          letterSpacing: '-0.3px',
-        }}
+        className={styles.logo}
       >
         DataShare
-      </span>
+      </button>
 
-      <nav style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      <nav className={styles.nav}>
         {isLoggedIn ? (
           <>
-            <button onClick={() => navigate('/my-space')} style={navBtn()}>
+            <button
+              type="button"
+              onClick={() => navigate('/my-space')}
+              className={styles.navBtn}
+            >
               Mon espace
             </button>
           </>
         ) : (
-          <button onClick={() => navigate('/login')} style={navBtn()}>
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className={styles.navBtn}
+          >
             Se connecter
           </button>
         )}
       </nav>
     </header>
   );
-}
-
-function navBtn(): React.CSSProperties {
-  return {
-    padding: '8px 20px',
-    background: '#1a1a1a',
-    color: 'white',
-    border: 'none',
-    borderRadius: '999px',
-    cursor: 'pointer',
-    fontSize: '13px',
-    fontWeight: 500,
-  };
 }
